@@ -22,5 +22,9 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "yargs": "^3.24.0"
+  },
+  "dependencies": {
+    "algoliasearch": "^3.7.8",
+    "react": "^0.13.3"
   }
 }
