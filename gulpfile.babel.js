@@ -12,13 +12,15 @@ import buffer from 'vinyl-buffer';
 import sourcemaps from 'gulp-sourcemaps';
 import gulpif from 'gulp-if';
 import uglify from 'gulp-uglify';
-
 import sass from 'gulp-sass';
 import minifyCss from 'gulp-minify-css';
 import rename from 'gulp-rename';
 
 
+const DIST_DIR = './dist';
 const OPTIONS = {
+    distDir: DIST_DIR,
+
     browserifyConfig: {
         entries: 'app/js/algobuy.jsx',
         basedir: '.',
@@ -28,13 +30,13 @@ const OPTIONS = {
 
     js: {
         bundleName: 'algobuy.js',
-        destDir: './dist/js'
+        destDir: `${DIST_DIR}/js`
     },
 
     sass: {
         source: 'app/styles/main.scss',
         bundleName: 'main.css',
-        destDir: './dist/css'
+        destDir: `${DIST_DIR}/css`
     }
 };
 
@@ -61,7 +63,7 @@ gulp.task('scss-lint', () => {
 
 
 // BUILDING TASKS
-gulp.task('build', ['js-build', 'scss-build', 'assets-copy']);
+gulp.task('build', ['lint', 'js-build', 'scss-build', 'assets-copy']);
 
 gulp.task('js-build', () => {
     var bundler = browserify(OPTIONS.browserifyConfig);
@@ -105,7 +107,8 @@ gulp.task('scss-build', () => {
 });
 
 gulp.task('assets-copy', () => {
-
+    // Simply copy all assets to the destination directory
+    gulp.src('app/assets/**/*').pipe(gulp.dest(OPTIONS.distDir))
 });
 
 
