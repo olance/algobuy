@@ -129,7 +129,7 @@ gulp.task('scss-build', ['scss-lint'], () => {
         // Generate sourcemaps
         .pipe(sourcemaps.init())
 
-        .pipe(sass().on('error', errorHandler))
+        .pipe(sass({ includePaths: 'node_modules' }).on('error', errorHandler))
 
         // For production build, minify css
         .pipe(gulpif(argv.production, minifyCss()))
