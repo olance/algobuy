@@ -64,4 +64,17 @@ there.
 The `lint` task will be ran prior to building and the process will stop if there
 is any linting error.
 
-When using the `--production` flag, generated JS and CSS files will be uglified/minified.  
+When using the `--production` flag, generated JS and CSS files will be 
+uglified/minified.
+  
+  
+## server
+
+    gulp server
+    
+The server task will serve files from the dist folder and create a Socket.io
+connection between the server and the running website instances to live reload 
+CSS/scripts/... when they change.
+
+Note that the page won't update if there's been a linting error introduced with
+ the new modifications. Linting errors can then be found on the task's output.

@@ -16,6 +16,8 @@ import sass from 'gulp-sass';
 import minifyCss from 'gulp-minify-css';
 import rename from 'gulp-rename';
 
+import server from 'gulp-server-livereload';
+
 
 const DIST_DIR = './dist';
 const OPTIONS = {
@@ -30,13 +32,19 @@ const OPTIONS = {
 
     js: {
         bundleName: 'algobuy.js',
-        destDir: `${DIST_DIR}/js`
+        destDir: `${DIST_DIR}/js`,
+        globs: ['app/js/**/*.js', 'app/js/**/*.jsx']
     },
 
     sass: {
         source: 'app/styles/main.scss',
         bundleName: 'main.css',
-        destDir: `${DIST_DIR}/css`
+        destDir: `${DIST_DIR}/css`,
+        globs: ['app/styles/**/*.scss']
+    },
+
+    assets: {
+        globs: ['app/assets/**/*']
     }
 };
 
@@ -44,19 +52,37 @@ const OPTIONS = {
 // Default task will just run lint
 gulp.task('default', ['lint']);
 
+// The server task will serve files from the dist folder and create a Socket.io
+// connection between the server and the running website instances to live
+// reload CSS/scripts/... when they change
+gulp.task('server', ['build'], function() {
+    // Ask Gulp to watch our source files and to build again when any file
+    // changes.
+    gulp.watch(OPTIONS.js.globs, ['js-build']);
+    gulp.watch(OPTIONS.sass.globs, ['scss-build']);
+    gulp.watch(OPTIONS.assets.globs, ['assets-copy']);
+
+    // Start the server & live-reload stuff, serving/watching the content of the
+    // dist directory.
+    gulp.src('dist')
+        .pipe(server({
+            livereload: true,
+            open: true
+        }));
+});
 
 // LINTING TASKS
 gulp.task('lint', ['scss-lint', 'js-lint']);
 
 gulp.task('js-lint', () => {
-    return gulp.src(['app/js/**/*.js', 'app/js/**/*.jsx'])
+    return gulp.src(OPTIONS.js.globs)
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failOnError());
 });
 
 gulp.task('scss-lint', () => {
-    return gulp.src(['app/styles/**/*.scss'])
+    return gulp.src(OPTIONS.sass.globs)
         .pipe(scsslint())
         .pipe(scsslint.failReporter());
 });
@@ -108,7 +134,7 @@ gulp.task('scss-build', ['scss-lint'], () => {
 
 gulp.task('assets-copy', () => {
     // Simply copy all assets to the destination directory
-    return gulp.src('app/assets/**/*').pipe(gulp.dest(OPTIONS.distDir))
+    return gulp.src(OPTIONS.assets.globs).pipe(gulp.dest(OPTIONS.distDir))
 });
 
 
