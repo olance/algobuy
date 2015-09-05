@@ -78,3 +78,11 @@ CSS/scripts/... when they change.
 
 Note that the page won't update if there's been a linting error introduced with
  the new modifications. Linting errors can then be found on the task's output.
+
+
+## publish
+
+	gulp publish
+	
+This task deploys the `dist` directory's content to the `gh-page` branch to make
+the demo website accessible at http://olance.github.io/algobuy/ 
