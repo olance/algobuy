@@ -7,7 +7,6 @@ advanced e-commerce auto-complete menu.
 
 
 # Getting started
------------------
 
 ## Requirements
 
@@ -39,7 +38,6 @@ That's it! You can now use the available Gulp tasks and get to work!
 
 
 # Project tasks
----------------
 
 ## lint
 
