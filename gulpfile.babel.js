@@ -13,6 +13,10 @@ import sourcemaps from 'gulp-sourcemaps';
 import gulpif from 'gulp-if';
 import uglify from 'gulp-uglify';
 
+import sass from 'gulp-sass';
+import minifyCss from 'gulp-minify-css';
+import rename from 'gulp-rename';
+
 
 const OPTIONS = {
     browserifyConfig: {
@@ -25,6 +29,12 @@ const OPTIONS = {
     js: {
         bundleName: 'algobuy.js',
         destDir: './dist/js'
+    },
+
+    sass: {
+        source: 'app/styles/main.scss',
+        bundleName: 'main.css',
+        destDir: './dist/css'
     }
 };
 
@@ -78,7 +88,20 @@ gulp.task('js-build', () => {
 });
 
 gulp.task('scss-build', () => {
+    gulp.src(OPTIONS.sass.source)
+        .pipe(rename(OPTIONS.sass.bundleName))
 
+        // Generate sourcemaps
+        .pipe(sourcemaps.init())
+
+        .pipe(sass().on('error', errorHandler))
+
+        // For production build, minify css
+        .pipe(gulpif(argv.production, minifyCss()))
+        .on('error', errorHandler)
+
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(OPTIONS.sass.destDir));
 });
 
 gulp.task('assets-copy', () => {
