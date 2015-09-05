@@ -1,5 +1,10 @@
 {
   "name": "algobuy",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.0.0",
+    "gulp-scss-lint": "^0.3.0"
+  }
 }
