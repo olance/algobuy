@@ -47,3 +47,21 @@ That's it! You can now use the available Gulp tasks and get to work!
 
 Will run ESLint and scss-lint to make sure the code is on par with expected 
 coding standards.
+
+
+## build
+ 
+    gulp build
+    
+or:
+
+    gulp build --production
+
+Bundles all Javascript code together, transpiles SCSS to CSS code, outputs 
+everything to the `dist` directory and also copies the `app/assets` directory 
+there.
+  
+The `lint` task will be ran prior to building and the process will stop if there
+is any linting error.
+
+When using the `--production` flag, generated JS and CSS files will be uglified/minified.  
