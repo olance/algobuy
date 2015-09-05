@@ -49,23 +49,23 @@ gulp.task('default', ['lint']);
 gulp.task('lint', ['scss-lint', 'js-lint']);
 
 gulp.task('js-lint', () => {
-    gulp.src(['app/js/**/*.js', 'app/js/**/*.jsx'])
+    return gulp.src(['app/js/**/*.js', 'app/js/**/*.jsx'])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failOnError());
 });
 
 gulp.task('scss-lint', () => {
-    gulp.src(['app/styles/**/*.scss'])
+    return gulp.src(['app/styles/**/*.scss'])
         .pipe(scsslint())
         .pipe(scsslint.failReporter());
 });
 
 
 // BUILDING TASKS
-gulp.task('build', ['lint', 'js-build', 'scss-build', 'assets-copy']);
+gulp.task('build', ['js-build', 'scss-build', 'assets-copy']);
 
-gulp.task('js-build', () => {
+gulp.task('js-build', ['js-lint'], () => {
     var bundler = browserify(OPTIONS.browserifyConfig);
 
     bundler.on('error', errorHandler);
@@ -74,7 +74,7 @@ gulp.task('js-build', () => {
     bundler.transform(babelify);
 
     // Bundle our js code
-    bundler.bundle()
+    return bundler.bundle()
         .pipe(source(OPTIONS.js.bundleName))
         .pipe(buffer())
 
@@ -89,8 +89,8 @@ gulp.task('js-build', () => {
         .pipe(gulp.dest(OPTIONS.js.destDir));
 });
 
-gulp.task('scss-build', () => {
-    gulp.src(OPTIONS.sass.source)
+gulp.task('scss-build', ['scss-lint'], () => {
+    return gulp.src(OPTIONS.sass.source)
         .pipe(rename(OPTIONS.sass.bundleName))
 
         // Generate sourcemaps
@@ -108,7 +108,7 @@ gulp.task('scss-build', () => {
 
 gulp.task('assets-copy', () => {
     // Simply copy all assets to the destination directory
-    gulp.src('app/assets/**/*').pipe(gulp.dest(OPTIONS.distDir))
+    return gulp.src('app/assets/**/*').pipe(gulp.dest(OPTIONS.distDir))
 });
 
 
