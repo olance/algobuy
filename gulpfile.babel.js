@@ -93,7 +93,7 @@ gulp.task('js-lint', () => {
 gulp.task('scss-lint', () => {
     return gulp.src(OPTIONS.sass.globs)
         .pipe(scsslint())
-        .pipe(scsslint.failReporter());
+        .pipe(scsslint.failReporter('E'));
 });
 
 
