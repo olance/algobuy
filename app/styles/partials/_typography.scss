@@ -1,6 +1,11 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:300|Open+Sans:400,300,600);
 @import 'mixins/font_smoothing';
 
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
 h1 {
   @include font-smoothing(on);
 

@@ -1,14 +1,18 @@
 @import 'normalize.css/normalize';
+
 @import 'partials/colors';
 @import 'partials/typography';
 @import 'partials/layout';
+
+@import 'mixins/autocomplete';
+
 
 html {
   height: 100%;
 }
 
 body {
-  color: $text-color;
+  color: $white;
 
   background-attachment: fixed;
   background-color: $dark-blue;
@@ -25,4 +29,8 @@ header {
   margin: 50px 0;
 
   text-align: center;
+
+  .autocomplete {
+    @include autocomplete($width: 700, $height: 45);
+  }
 }
