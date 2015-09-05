@@ -18,6 +18,29 @@ import rename from 'gulp-rename';
 
 import server from 'gulp-server-livereload';
 
+/**** TASKS ****/
+
+// Default task will just run lint
+gulp.task('default', ['lint']);
+
+// Lint Javascript & SCSS code
+gulp.task('lint', ['scss-lint', 'js-lint']);
+
+// The build task bundles the JS code, converts SCSS to CSS and uglify/minify
+// everything if the `--production` flag was given on the command line. It also
+// copies all files from app/assets to the dist directory.
+gulp.task('build', ['js-build', 'scss-build', 'assets-copy']);
+
+// The server task serves files from the dist folder and create a Socket.io
+// connection between the server and the running website instances to live
+// reload CSS/scripts/... when they change
+gulp.task('server', ['build'], serveContent);
+
+// The publish task deploys the current build to Github Pages
+gulp.task('publish', publish);
+
+
+/**** CONFIG ****/
 
 const DIST_DIR = './dist';
 const OPTIONS = {
@@ -48,32 +71,16 @@ const OPTIONS = {
     }
 };
 
+/**** THE "INTERNAL" STUFF ****/
 
-// Default task will just run lint
-gulp.task('default', ['lint']);
+function errorHandler(error)
+{
+    util.log(util.colors.red('!! Error: ' + error.message));
+    this.end();
+}
 
-// The server task will serve files from the dist folder and create a Socket.io
-// connection between the server and the running website instances to live
-// reload CSS/scripts/... when they change
-gulp.task('server', ['build'], function() {
-    // Ask Gulp to watch our source files and to build again when any file
-    // changes.
-    gulp.watch(OPTIONS.js.globs, ['js-build']);
-    gulp.watch(OPTIONS.sass.globs, ['scss-build']);
-    gulp.watch(OPTIONS.assets.globs, ['assets-copy']);
 
-    // Start the server & live-reload stuff, serving/watching the content of the
-    // dist directory.
-    gulp.src('dist')
-        .pipe(server({
-            livereload: true,
-            open: true
-        }));
-});
-
-// LINTING TASKS
-gulp.task('lint', ['scss-lint', 'js-lint']);
-
+// LINTING SUBTASKS
 gulp.task('js-lint', () => {
     return gulp.src(OPTIONS.js.globs)
         .pipe(eslint())
@@ -88,9 +95,7 @@ gulp.task('scss-lint', () => {
 });
 
 
-// BUILDING TASKS
-gulp.task('build', ['js-build', 'scss-build', 'assets-copy']);
-
+// BUILDING SUBTASKS
 gulp.task('js-build', ['js-lint'], () => {
     var bundler = browserify(OPTIONS.browserifyConfig);
 
@@ -138,8 +143,27 @@ gulp.task('assets-copy', () => {
 });
 
 
-function errorHandler(error)
+// SERVER/LIVE-RELOAD
+function serveContent()
 {
-    util.log(util.colors.red('!! Error: ' + error.message));
-    this.end();
+    // Ask Gulp to watch our source files and to build again when any file
+    // changes.
+    gulp.watch(OPTIONS.js.globs, ['js-build']);
+    gulp.watch(OPTIONS.sass.globs, ['scss-build']);
+    gulp.watch(OPTIONS.assets.globs, ['assets-copy']);
+
+    // Start the server & live-reload stuff, serving/watching the content of the
+    // dist directory.
+    return gulp.src('dist')
+        .pipe(server({
+            livereload: true,
+            open: true
+        }));
+}
+
+
+// GITHUB PAGES PUBLISHING
+function publish()
+{
+
 }
