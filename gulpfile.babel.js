@@ -18,6 +18,8 @@ import rename from 'gulp-rename';
 
 import server from 'gulp-server-livereload';
 
+import shell from 'gulp-shell';
+
 /**** TASKS ****/
 
 // Default task will just run lint
@@ -37,7 +39,7 @@ gulp.task('build', ['js-build', 'scss-build', 'assets-copy']);
 gulp.task('server', ['build'], serveContent);
 
 // The publish task deploys the current build to Github Pages
-gulp.task('publish', publish);
+gulp.task('publish', shell.task(['./scripts/deploy.sh']));
 
 
 /**** CONFIG ****/
@@ -159,11 +161,4 @@ function serveContent()
             livereload: true,
             open: true
         }));
-}
-
-
-// GITHUB PAGES PUBLISHING
-function publish()
-{
-
 }
