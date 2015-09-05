@@ -1,0 +1,62 @@
+//
+//This mixin, once included, will generate rules for a customized auto-complete
+//widget.
+//
+//@param
+//
+@import 'font_smoothing';
+
+@mixin autocomplete($width: 250, $height: 25) {
+  display: inline-block;
+  position: relative;
+
+  width: #{$width}px;
+
+  color: $dark-grey;
+
+  > input {
+    @include font-smoothing(on);
+
+    width: 100%;
+    height: #{$height}px;
+    padding: #{$height * .1}px #{$height * .2}px;
+    padding-right: 35px;
+
+    font-size: #{$height * .5}px;
+    font-weight: 300;
+    line-height: #{$height * .9}px;
+
+    border: 2px solid $lighter-blue;
+    border-radius: 5px;
+
+    outline: none;
+
+    box-shadow: 3px 4px 5px 0 rgba(0, 0, 0, .2) inset;
+  }
+
+  > .input-icon {
+    position: absolute;
+    right: 7px;
+    top: 10px;
+
+    width: 27px;
+    height: 27px;
+
+    background: transparent url('/images/search-icon.png') no-repeat center center;
+
+    opacity: .6;
+  }
+
+  &:hover {
+    > .input-icon {
+      opacity: 1;
+    }
+  }
+
+  &.open {
+    > .input-icon {
+      background: transparent url('/images/empty-icon.png') no-repeat center center;
+      cursor: pointer;
+    }
+  }
+}
