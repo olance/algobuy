@@ -14,16 +14,26 @@ class QueryStore extends Store {
         switch(action.type) {
             // Update our current query value when it's changed
             case QueryConstants.QUERY_CHANGED:
-                setCurrentQuery(action.query);
-                this.__emitChange();
+                let oldQuery = currentQuery;
+                currentQuery = action.query;
+
+                // Do not emit a change event if the query remained identical
+                if(oldQuery !== currentQuery)
+                {
+                    this.__emitChange();
+                }
+
+                break;
+
+            case QueryConstants.QUERY_CLEARED:
+                if(currentQuery != '')
+                {
+                    currentQuery = '';
+                    this.__emitChange();
+                }
                 break;
         }
     }
-}
-
-function setCurrentQuery(query)
-{
-    currentQuery = query;
 }
 
 export default new QueryStore(Dispatcher);

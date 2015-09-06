@@ -10,4 +10,10 @@ export default class QueryActions {
         });
     }
 
+    static queryCleared() {
+        Dispatcher.dispatch({
+            type: QueryConstants.QUERY_CLEARED
+        });
+    }
+
 };

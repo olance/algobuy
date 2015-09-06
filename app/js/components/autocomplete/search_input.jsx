@@ -28,10 +28,19 @@ class SearchInput extends React.Component {
     }
 
     queryChanged(event) {
-        var $input = $(event.target);
+        var $input = $(event.target),
+            query = $input.val();
 
-        // Dispatch an action to notify the query changed
-        QueryActions.queryChanged($input.val());
+        if(_.isEmpty(query.trim()))
+        {
+            // Dispatch an action to notify the query was cleared
+            QueryActions.queryCleared();
+        }
+        else
+        {
+            // Dispatch an action to notify the query changed
+            QueryActions.queryChanged(query);
+        }
     }
 
     inputIconClicked() {
@@ -45,7 +54,7 @@ class SearchInput extends React.Component {
         }
 
         // Clear the current query and focus back the text input
-        QueryActions.queryChanged('');
+        QueryActions.queryCleared();
         this._focus();
     }
 
