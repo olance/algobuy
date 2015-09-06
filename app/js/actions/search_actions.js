@@ -7,7 +7,7 @@ export default class SearchActions {
         Dispatcher.dispatch({
             type: SearchConstants.SEARCH_RESULTS_RECEIVED,
             results: results,
-            searchParams: params
+            params: params
         });
     }
 

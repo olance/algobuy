@@ -63,7 +63,7 @@ class SearchStore extends Store {
             case SearchConstants.SEARCH_RESULTS_RECEIVED:
                 searchResults = {
                     results: action.results,
-                    searchParams: action.searchParams
+                    params: action.params
                 };
                 lastError = null;
                 this.__emitChange();
