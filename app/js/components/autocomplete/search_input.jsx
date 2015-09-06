@@ -12,7 +12,7 @@ class SearchInput extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="search-input">
                 <input className="query" type="text"
                        placeholder="Type something..." autoFocus="autofocus"
                        autoComplete="off" spellCheck="false" autoCorrect="off"
