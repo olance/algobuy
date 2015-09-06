@@ -26,12 +26,17 @@
     font-weight: 300;
     line-height: #{$height * .9}px;
 
-    border: 2px solid $lighter-blue;
+    border: 2px solid $dark-blue;
     border-radius: 5px;
 
     outline: none;
 
     box-shadow: 3px 4px 5px 0 rgba(0, 0, 0, .2) inset;
+
+    &:hover,
+    &:focus {
+      border-color: $lighter-blue;
+    }
   }
 
   > .input-icon {
@@ -42,7 +47,8 @@
     width: 27px;
     height: 27px;
 
-    background: transparent url('/images/search-icon.png') no-repeat center center;
+    background: transparent url('/images/clear-icon.png') no-repeat center center;
+    cursor: pointer;
 
     opacity: .6;
   }
@@ -53,10 +59,11 @@
     }
   }
 
-  &.open {
+  &.empty {
     > .input-icon {
-      background: transparent url('/images/empty-icon.png') no-repeat center center;
-      cursor: pointer;
+      background: transparent url('/images/search-icon.png') no-repeat center center;
+      cursor: default;
+      pointer-events: none;
     }
   }
 }
