@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './app_header.jsx';
-import Autocomplete from './autocomplete.jsx';
+import Autocomplete from './autocomplete/autocomplete.jsx';
 
 
 class App extends React.Component {
