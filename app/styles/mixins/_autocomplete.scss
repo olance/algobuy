@@ -14,7 +14,7 @@
 
   color: $dark-grey;
 
-  > input {
+  input.query {
     @include font-smoothing(on);
 
     width: 100%;
@@ -39,7 +39,7 @@
     }
   }
 
-  > .input-icon {
+  .query-input-icon {
     position: absolute;
     right: 7px;
     top: 10px;
@@ -54,13 +54,13 @@
   }
 
   &:hover {
-    > .input-icon {
+    .query-input-icon {
       opacity: 1;
     }
   }
 
   &.empty {
-    > .input-icon {
+    .query-input-icon {
       background: transparent url('/images/search-icon.png') no-repeat center center;
       cursor: default;
       pointer-events: none;
