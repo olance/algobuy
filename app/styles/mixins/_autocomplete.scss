@@ -14,7 +14,7 @@
 
   color: $dark-grey;
 
-  input.query {
+  .query {
     @include font-smoothing(on);
 
     width: 100%;
