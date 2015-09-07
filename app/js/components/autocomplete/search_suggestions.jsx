@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import cx from 'classnames';
+import pluralize from 'pluralize';
 
 import React from 'react';
 
@@ -49,6 +50,7 @@ class SearchSuggestions extends React.Component {
                     <div className="price-ranges">
                         {ranges}
                     </div>
+                    <CategoriesSearch search={this.props.search}/>
                 </div>
             );
         }
@@ -66,6 +68,9 @@ class SearchSuggestions extends React.Component {
 export default SearchSuggestions;
 
 // PRIVATE COMPONENTS
+
+// The PriceRangeTag represents a selectable price range used to refine the
+// current search.
 class PriceRangeTag extends React.Component {
     render() {
         var className = cx('price-range', {
@@ -84,3 +89,57 @@ class PriceRangeTag extends React.Component {
     }
 }
 
+// The CategoriesSearch component suggests "regular" searches that the user
+// could perform in the categories that hold the highest count of products for
+// his query.
+class CategoriesSearch extends React.Component {
+    render() {
+        var suggestions = this._categoriesSuggestions();
+
+        return (
+            <div className="categories">
+                <div className="heading">
+                    Search suggestions
+                </div>
+
+                <ul className="list">
+                    {suggestions}
+                </ul>
+            </div>
+        );
+    }
+
+    // Private methods
+    _categoriesSuggestions() {
+        var categories = this.props.search.results.getFacetValues(
+            'categories',
+            { sortBy: ['count:desc', 'name:asc'] }
+        );
+
+        // We'd need way to specify `maxValuesPerFacet` for each facet
+        // independently :)
+        categories = _.take(categories, 3);
+        categories.unshift(this._allDeptsCategory());
+
+        return _.map(categories, (category) => {
+            let pluralizedResults = pluralize('result', category.count);
+
+            return (
+                <li key={category.name}>
+                    <span className="results-count">
+                        {category.count} {pluralizedResults}
+                    </span>
+                    {` for "${this.props.search.query}" in `}
+                    <span className="category-name">{category.name}</span>
+                </li>
+            );
+        });
+    }
+
+    _allDeptsCategory() {
+        return {
+            name: 'All Departments',
+            count: this.props.search.results.nbHits
+        };
+    }
+}
