@@ -18,8 +18,8 @@ class SearchStore extends Store {
     constructor(dispatcher) {
         super(dispatcher);
 
-        Search.on('result', this._searchResults.bind(this));
-        Search.on('error', this._searchError.bind(this));
+        Search.on('result', this._serverSearchResultsReceived.bind(this));
+        Search.on('error', this._serverSearchFailed.bind(this));
     }
 
     getResults() {
@@ -38,58 +38,75 @@ class SearchStore extends Store {
             // When it's available, use the new query string to start a search
             // request.
             case QueryConstants.QUERY_CHANGED:
-                Dispatcher.waitFor([QueryStore.getDispatchToken()]);
-
-                // There's nothing to do if the query hasn't really changed
-                if(!QueryStore.hasChanged())
-                {
-                    return;
-                }
-
-                // Search!
-                Search.setQuery(QueryStore.getQuery()).search();
-
+                this._handleQueryChanged();
                 break;
 
             case QueryConstants.QUERY_CLEARED:
-                if(searchResults != SearchConstants.EMPTY_SEARCH_QUERY)
-                {
-                    searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
-                    this.__emitChange();
-                }
+                this._handleQueryCleared();
                 break;
 
             // When results are received, store them and notify the change
             case SearchConstants.SEARCH_RESULTS_RECEIVED:
-                searchResults = {
-                    results: action.results,
-                    params: action.params
-                };
-                lastError = null;
-                this.__emitChange();
+                this._handleResultsReceived(action);
                 break;
 
             // When search failed, store a special value SEARCH_ERROR as our
             // results and store the error message.
             case SearchConstants.SEARCH_FAILED:
-                searchResults = SearchConstants.SEARCH_ERROR;
-                lastError = error.message;
-                this.__emitChange();
+                this._handleSearchFailed();
                 break;
         }
     }
 
     // Private methods
-    _searchResults(results, params) {
+    // SERVER EVENTS
+    _serverSearchResultsReceived(results, params) {
         // To enforce a single data flow direction, we just dispatch an action
         // with the received results
         SearchActions.receivedResults(results, params);
     }
 
-    _searchError(error) {
+    _serverSearchFailed(error) {
         // To enforce a single data flow direction, we just dispatch an action
         // with the search error
         SearchActions.searchFailed(error);
+    }
+
+    // DISPATCHER EVENTS
+    _handleQueryChanged() {
+        Dispatcher.waitFor([QueryStore.getDispatchToken()]);
+
+        // There's nothing to do if the query hasn't really changed
+        if(!QueryStore.hasChanged())
+        {
+            return;
+        }
+
+        // Search!
+        Search.setQuery(QueryStore.getQuery()).search();
+    }
+
+    _handleQueryCleared() {
+        if(searchResults != SearchConstants.EMPTY_SEARCH_QUERY)
+        {
+            searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
+            this.__emitChange();
+        }
+    }
+
+    _handleResultsReceived(action) {
+        searchResults = {
+            results: action.results,
+            params: action.params
+        };
+        lastError = null;
+        this.__emitChange();
+    }
+
+    _handleSearchFailed() {
+        searchResults = SearchConstants.SEARCH_ERROR;
+        lastError = error.message;
+        this.__emitChange();
     }
 }
 
