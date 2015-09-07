@@ -12,6 +12,10 @@ import Search from 'algolia/search';
 var searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
 var lastError = null;
 
+// Will be initialized to a new PriceRangeList once the class is defined
+// #ForwardDeclarationFTW
+var currentPriceRanges = null;
+
 // This store launches a search request when the search query changes, and then
 // emit a change event when the results are received.
 class SearchStore extends Store {
@@ -28,6 +32,10 @@ class SearchStore extends Store {
 
     getLastError() {
         return lastError;
+    }
+
+    getPriceRanges() {
+        return currentPriceRanges.getPriceRanges();
     }
 
     __onDispatch(action) {
@@ -100,6 +108,7 @@ class SearchStore extends Store {
 
             // Clear all refinements to start the next search "cleanly"
             Search.clearRefinements();
+            currentPriceRanges.clear();
 
             this.__emitChange();
         }
@@ -111,7 +120,19 @@ class SearchStore extends Store {
             params: action.params
         };
         lastError = null;
+
+        this._updatePriceRanges(action.results);
+
         this.__emitChange();
+    }
+
+
+    _updatePriceRanges(results) {
+        var ranges = results.getFacetValues('price_range', {
+            sortBy: ['name:asc']
+        });
+
+        currentPriceRanges.updateRanges(ranges);
     }
 
     _handleSearchFailed() {
@@ -133,3 +154,67 @@ class SearchStore extends Store {
 }
 
 export default new SearchStore(Dispatcher);
+
+
+// PRIVATE CLASSES
+
+// The PriceRangeList maintains a list of ... price ranges.
+// It makes sure the first virtual "any price" tag is present and updates the
+// active state of the selected price range within the list.
+// The idea is to be able to always show the full list of price_range facet
+// values relevant to the current search query (when it's ran without
+// refinements), even when a refinement has been made.
+class PriceRangeList {
+    constructor() {
+        this.priceRanges = [];
+    }
+
+    // Remember the available price ranges when we receive results and no
+    // refinement has been made. Thus, when one is eventually made, we can
+    // still get the whole list of ranges relevant to the current search
+    // query.
+    // When a price range refinement has been made, just update the current
+    // list to update the active range.
+    updateRanges(newRanges) {
+        if(_.any(newRanges, 'isRefined'))
+        {
+            let currentActiveRange = _.find(this.priceRanges, 'isRefined'),
+                activeRangeName = _.find(newRanges, 'isRefined').name,
+                activeRange = _.find(this.priceRanges, 'name', activeRangeName);
+
+            if(currentActiveRange)
+            {
+                currentActiveRange.isRefined = false;
+            }
+
+            if (activeRange)
+            {
+                activeRange.isRefined = true;
+            }
+        }
+        else
+        {
+            this.priceRanges = _.cloneDeep(newRanges);
+            this.priceRanges.unshift(PriceRangeList.anyPriceRange(true));
+        }
+    }
+
+    clear() {
+        this.priceRanges = [];
+    }
+
+    getPriceRanges() {
+        // Clone to avoid unwanted side-effects
+        // TODO: use immutables?
+        return _.cloneDeep(this.priceRanges);
+    }
+
+    static anyPriceRange(isRefined) {
+        return {
+            name: SearchConstants.ANY_PRICE_RANGE,
+            isRefined: isRefined
+        }
+    }
+}
+
+currentPriceRanges = new PriceRangeList();

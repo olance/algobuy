@@ -42,12 +42,12 @@ class SearchSuggestions extends React.Component {
         {
             // Create a list of all available price range tags for the search
             // results we received
-            let rangeTags = this._priceRangesList(results);
+            let ranges = this._priceRangesList(this.props.search.priceRanges);
 
             return (
                 <div className="search-suggestions">
                     <div className="price-ranges">
-                        {rangeTags}
+                        {ranges}
                     </div>
                 </div>
             );
@@ -55,27 +55,11 @@ class SearchSuggestions extends React.Component {
     }
 
     // Private methods
-    _priceRangesList(results) {
-        // Get all available price_range values
-        var priceRanges = results.getFacetValues('price_range', {
-            sortBy: ['name:asc']
-        });
-
+    _priceRangesList(priceRanges) {
         // Map all ranges to their tag
-        var rangeTags = priceRanges.map((range) => {
+        return priceRanges.map((range) => {
             return <PriceRangeTag key={range.name} priceRange={range} />;
-        });
-
-        // Add a "any price" tag used when no refinement has been done
-        var anyRange = {
-            name: SearchConstants.ANY_PRICE_RANGE,
-            isRefined: !_.any(priceRanges, 'isRefined')
-        };
-
-        rangeTags.unshift(<PriceRangeTag key="any-price"
-                                         priceRange={anyRange}/>);
-
-        return rangeTags;
+        });;
     }
 }
 

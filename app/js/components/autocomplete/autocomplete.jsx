@@ -26,6 +26,7 @@ class AutocompleteContainer extends React.Component {
             query: QueryStore.getQuery(),
             results: searchResults.results || searchResults,
             params: searchResults.params,
+            priceRanges: SearchStore.getPriceRanges(),
             error: SearchStore.getLastError()
         }
     }
