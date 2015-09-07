@@ -14,43 +14,97 @@
 
   color: $dark-grey;
 
-  .query {
-    @include font-smoothing(on);
+  text-align: left;
 
-    width: 100%;
-    height: #{$height}px;
-    padding: #{$height * .1}px #{$height * .2}px;
-    padding-right: 35px;
+  .search-input {
+    .query {
+      @include font-smoothing(on);
 
-    font-size: #{$height * .5}px;
-    font-weight: 300;
-    line-height: #{$height * .9}px;
+      width: 100%;
+      height: #{$height}px;
+      padding: #{$height * .1}px #{$height * .2}px;
+      padding-right: 35px;
 
-    border: 2px solid $dark-blue;
-    border-radius: 5px;
+      font-size: #{$height * .5}px;
+      font-weight: 300;
+      line-height: #{$height * .9}px;
 
-    outline: none;
+      border: 2px solid $dark-blue;
+      border-radius: 5px;
 
-    box-shadow: 3px 4px 5px 0 rgba(0, 0, 0, .2) inset;
+      outline: none;
 
-    &:hover,
-    &:focus {
-      border-color: $lighter-blue;
+      box-shadow: 3px 4px 5px 0 rgba(0, 0, 0, .2) inset;
+
+      &:hover,
+      &:focus {
+        border-color: $lighter-blue;
+      }
+    }
+
+    .query-input-icon {
+      position: absolute;
+      right: 7px;
+      top: 10px;
+
+      width: 27px;
+      height: 27px;
+
+      background: transparent url('/images/clear-icon.png') no-repeat center center;
+      cursor: pointer;
+
+      opacity: .6;
     }
   }
 
-  .query-input-icon {
-    position: absolute;
-    right: 7px;
-    top: 10px;
+  .search-suggestions {
+    position: relative;
+    left: 50%;
 
-    width: 27px;
-    height: 27px;
+    width: #{$width - 4}px;
 
-    background: transparent url('/images/clear-icon.png') no-repeat center center;
-    cursor: pointer;
+    margin-left: -#{$width / 2 - 2}px;
+    padding: 10px;
 
-    opacity: .6;
+    background-color: rgb(255, 255, 255);
+
+    border: 1px solid rgb(128, 128, 128);
+    border-top: 0;
+
+    box-shadow: 5px 9px 20px 0 rgba(0, 0, 0, .3);
+
+    .price-range {
+      @include font-smoothing(on);
+
+      display: inline-block;
+
+      margin: 0 2px;
+      padding: 0 5px;
+
+      border: 1px solid $dark-blue;
+      border-radius: 5px;
+
+      color: $dark-blue;
+      background: $white;
+
+      font-size: .7em;
+      font-weight: 600;
+      line-height: 18px;
+
+      cursor: pointer;
+
+      &.active {
+        border-color: transparent;
+        color: $white;
+        background-color: $lighter-blue;
+      }
+
+      &.highlighted {
+        border-color: transparent;
+        color: $white;
+        background-color: $dark-blue;
+      }
+    }
   }
 
   &:hover {
