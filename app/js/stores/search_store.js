@@ -9,7 +9,7 @@ import * as SearchConstants from 'constants/search_constants.js';
 import SearchActions from 'actions/search_actions.js';
 import Search from 'algolia/search';
 
-var searchResults = SearchConstants.EMPTY_SEARCH;
+var searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
 var lastError = null;
 
 // This store launches a search request when the search query changes, and then
@@ -52,9 +52,9 @@ class SearchStore extends Store {
                 break;
 
             case QueryConstants.QUERY_CLEARED:
-                if(searchResults != SearchConstants.EMPTY_SEARCH)
+                if(searchResults != SearchConstants.EMPTY_SEARCH_QUERY)
                 {
-                    searchResults = SearchConstants.EMPTY_SEARCH;
+                    searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
                     this.__emitChange();
                 }
                 break;

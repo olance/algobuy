@@ -1,5 +1,5 @@
-// EMPTY_SEARCH denotes that no search has taken place
-export const EMPTY_SEARCH = Symbol('EmptySearch');
+// EMPTY_SEARCH_QUERY denotes that no search has taken place
+export const EMPTY_SEARCH_QUERY = Symbol('EmptySearchQuery');
 
 // SEARCH_ERROR indicates that there are no search results due to an error
 export const SEARCH_ERROR = Symbol('SearchError');
