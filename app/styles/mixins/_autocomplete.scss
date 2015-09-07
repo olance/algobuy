@@ -127,16 +127,61 @@
       &.active {
         border-color: transparent;
         color: $white;
-        background-color: $lighter-blue;
+        background-color: $dark-blue;
       }
 
-      &.highlighted {
+      &.highlighted,
+      &:hover,
+      &:focus {
         border-color: transparent;
         color: $white;
-        background-color: $dark-blue;
+        background-color: $lighter-blue;
+        outline: none;
+      }
+    }
+
+    %suggestions {
+      margin-top: 10px;
+      font-size: .875em;
+
+      .heading {
+        @include font-smoothing(on);
+
+        color: $dark-blue;
+        font-weight: 600;
+        border-bottom: 1px solid $dark-blue;
+      }
+    }
+
+    .categories {
+      @extend %suggestions;
+
+      .list {
+        padding: 0;
+        margin: 0;
+
+        list-style-type: none;
+
+        li {
+          padding: 4px 5px;
+          cursor: pointer;
+
+          &:hover,
+          &:focus {
+            background-color: $selection-blue;
+            outline: none;
+          }
+
+          .results-count {
+            @include font-smoothing(on);
+            font-weight: 600;
+          }
+
+          .category-name {
+            color: $lighter-blue;
+          }
+        }
       }
     }
   }
-
-
 }
