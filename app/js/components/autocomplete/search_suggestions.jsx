@@ -68,7 +68,7 @@ class SearchSuggestions extends React.Component {
 
         // Add a "any price" tag used when no refinement has been done
         var anyRange = {
-            name: 'any price',
+            name: SearchConstants.ANY_PRICE_RANGE,
             isRefined: !_.any(priceRanges, 'isRefined')
         };
 
@@ -96,7 +96,7 @@ class PriceRangeTag extends React.Component {
     }
 
     clicked() {
-
+        SearchActions.priceRangeChanged(this.props.priceRange.name);
     }
 }
 

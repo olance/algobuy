@@ -41,6 +41,7 @@ class SearchStore extends Store {
                 this._handleQueryChanged();
                 break;
 
+            // Set our search results to the special EMPTY_SEARCH_QUERY value
             case QueryConstants.QUERY_CLEARED:
                 this._handleQueryCleared();
                 break;
@@ -54,6 +55,12 @@ class SearchStore extends Store {
             // results and store the error message.
             case SearchConstants.SEARCH_FAILED:
                 this._handleSearchFailed();
+                break;
+
+            // Refine the current search with the selected price range facet and
+            // run the search again
+            case SearchConstants.PRICE_RANGE_CHANGED:
+                this._handlePriceRangeChanged(action);
                 break;
         }
     }
@@ -90,6 +97,10 @@ class SearchStore extends Store {
         if(searchResults != SearchConstants.EMPTY_SEARCH_QUERY)
         {
             searchResults = SearchConstants.EMPTY_SEARCH_QUERY;
+
+            // Clear all refinements to start the next search "cleanly"
+            Search.clearRefinements();
+
             this.__emitChange();
         }
     }
@@ -107,6 +118,17 @@ class SearchStore extends Store {
         searchResults = SearchConstants.SEARCH_ERROR;
         lastError = error.message;
         this.__emitChange();
+    }
+
+    _handlePriceRangeChanged(action) {
+        Search.clearRefinements('price_range');
+
+        if(action.priceRange !== SearchConstants.ANY_PRICE_RANGE)
+        {
+            Search.addFacetRefinement('price_range', action.priceRange);
+        }
+
+        Search.search();
     }
 }
 

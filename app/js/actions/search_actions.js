@@ -17,4 +17,11 @@ export default class SearchActions {
             error: error
         });
     }
+
+    static priceRangeChanged(priceRange) {
+        Dispatcher.dispatch({
+            type: SearchConstants.PRICE_RANGE_CHANGED,
+            priceRange: priceRange
+        });
+    }
 };

@@ -4,6 +4,9 @@ export const EMPTY_SEARCH_QUERY = Symbol('EmptySearchQuery');
 // SEARCH_ERROR indicates that there are no search results due to an error
 export const SEARCH_ERROR = Symbol('SearchError');
 
+// The '*' price range facet value
+export const ANY_PRICE_RANGE = 'any price';
+
 
 // ACTION TYPES //
 
