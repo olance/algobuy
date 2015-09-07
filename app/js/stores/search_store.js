@@ -128,9 +128,7 @@ class SearchStore extends Store {
 
 
     _updatePriceRanges(results) {
-        var ranges = results.getFacetValues('price_range', {
-            sortBy: ['name:asc']
-        });
+        var ranges = results.getFacetValues('price_range');
 
         currentPriceRanges.updateRanges(ranges);
     }
@@ -195,6 +193,7 @@ class PriceRangeList {
         else
         {
             this.priceRanges = _.cloneDeep(newRanges);
+            this.priceRanges = this.priceRanges.sort(PriceRangeList.sortRanges);
             this.priceRanges.unshift(PriceRangeList.anyPriceRange(true));
         }
     }
@@ -213,6 +212,33 @@ class PriceRangeList {
         return {
             name: SearchConstants.ANY_PRICE_RANGE,
             isRefined: isRefined
+        }
+    }
+
+    // This is a comparison method that is *very* specific to the data we're
+    // handling in this example...
+    static sortRanges(a, b) {
+        // Remove all spaces from both names
+        a = a.name.replace(/ /g, '');
+        b = b.name.replace(/ /g, '');
+
+        // "> 2000" always comes last
+        if(a === '>2000')
+        {
+            return 1;
+        }
+        else if(b === '>2000')
+        {
+            return -1;
+        }
+        // Otherwise we just sort according to the numerical order of the lower
+        // bounds of the ranges
+        else
+        {
+            let aLower = Number(a.split('-')[0]),
+                bLower = Number(b.split('-')[0]);
+
+            return aLower > bLower ? 1 : -1;
         }
     }
 }
