@@ -57,6 +57,20 @@
     }
   }
 
+  &:hover {
+    .query-input-icon {
+      opacity: 1;
+    }
+  }
+
+  &.empty {
+    .query-input-icon {
+      background: transparent url('/images/search-icon.png') no-repeat center center;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
   .search-suggestions {
     position: relative;
     left: 50%;
@@ -72,6 +86,23 @@
     border-top: 0;
 
     box-shadow: 5px 9px 20px 0 rgba(0, 0, 0, .3);
+
+    &.no-results,
+    &.search-error {
+      @include font-smoothing(on);
+
+      text-align: center;
+
+      color: $medium-grey;
+
+      font-size: 1.5em;
+      font-weight: 300;
+
+      img {
+        vertical-align: bottom;
+        margin-left: 20px;
+      }
+    }
 
     .price-range {
       @include font-smoothing(on);
@@ -107,17 +138,5 @@
     }
   }
 
-  &:hover {
-    .query-input-icon {
-      opacity: 1;
-    }
-  }
 
-  &.empty {
-    .query-input-icon {
-      background: transparent url('/images/search-icon.png') no-repeat center center;
-      cursor: default;
-      pointer-events: none;
-    }
-  }
 }

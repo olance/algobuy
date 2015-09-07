@@ -15,8 +15,11 @@ class SearchSuggestions extends React.Component {
         if(results == SearchConstants.SEARCH_ERROR)
         {
             return (
-                <div className="search-error">
-                    Oops! Something wrong happened.
+                <div className="search-suggestions search-error">
+                    <p>
+                        Something wrong happened. Sorry.
+                        <img src="images/search-error.png" alt="Error"/>
+                    </p>
                 </div>
             );
         }
@@ -27,8 +30,11 @@ class SearchSuggestions extends React.Component {
         else if(results.nbHits === 0)
         {
             return (
-                <div className="search-suggestions empty-search">
-                    Nothing found :(
+                <div className="search-suggestions no-results">
+                    <p>
+                        Nothing found.
+                        <img src="images/no-results.png" alt="Bummer!"/>
+                    </p>
                 </div>
             );
         }
