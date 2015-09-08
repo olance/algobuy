@@ -8,6 +8,11 @@ import * as SearchConstants from 'constants/search_constants.js';
 import SearchActions from 'actions/search_actions';
 import Search from 'algolia/search.js';
 
+// The SearchSuggestions component displays the panel that shows below the
+// search input, filling it with price filters and suggested searches/products.
+//
+// Children components for this one are declared at the end of the file to keep
+// them private.
 class SearchSuggestions extends React.Component {
     render() {
         var results = this.props.search.results,
@@ -51,6 +56,7 @@ class SearchSuggestions extends React.Component {
                         {ranges}
                     </div>
                     <CategoriesSearch search={this.props.search}/>
+                    <PopularProducts search={this.props.search}/>
                 </div>
             );
         }
@@ -141,5 +147,48 @@ class CategoriesSearch extends React.Component {
             name: 'All Departments',
             count: this.props.search.results.nbHits
         };
+    }
+}
+
+// The PopularProducts component shows the three most popular products that best
+// match the current search query
+class PopularProducts extends React.Component {
+    render() {
+        var products = this._popularProducts();
+
+        return (
+            <div className="popular-products">
+                <div className="heading">
+                    Popular products
+                </div>
+
+                <ul className="list">
+                    {products}
+                </ul>
+            </div>
+        );
+    }
+
+    // Private methods
+
+    // Select the 3 top results and return <li> tags for them
+    _popularProducts() {
+        var products = _.take(this.props.search.results.hits, 3);
+
+        return _.map(products, (product) => {
+            return (
+                <li key={product.objectID}>
+                    <div className="picture">
+                        <img src={product.image} alt={product.name}/>
+                    </div>
+                    <div className="price">${product.price}</div>
+                    <div className="add-to-cart">
+                        <img src="images/cart.png" alt="Cart"/>
+                        ADD TO CART
+                    </div>
+                    <div className="name">{product.name}</div>
+                </li>
+            );
+        });
     }
 }
