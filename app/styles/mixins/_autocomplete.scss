@@ -72,17 +72,21 @@
   }
 
   .search-suggestions {
+    $panel-width: $width - 4;
+    $panel-padding: 10;
+    $panel-border-width: 1;
+
     position: relative;
     left: 50%;
 
-    width: #{$width - 4}px;
+    width: #{$panel-width}px;
 
     margin-left: -#{$width / 2 - 2}px;
-    padding: 10px;
+    padding: #{$panel-padding}px;
 
     background-color: rgb(255, 255, 255);
 
-    border: 1px solid rgb(128, 128, 128);
+    border: #{$panel-border-width}px solid rgb(128, 128, 128);
     border-top: 0;
 
     box-shadow: 5px 9px 20px 0 rgba(0, 0, 0, .3);
@@ -151,34 +155,139 @@
         font-weight: 600;
         border-bottom: 1px solid $dark-blue;
       }
-    }
-
-    .categories {
-      @extend %suggestions;
 
       .list {
         padding: 0;
         margin: 0;
 
         list-style-type: none;
+      }
+    }
 
-        li {
-          padding: 4px 5px;
-          cursor: pointer;
+    .categories {
+      @extend %suggestions;
+
+      li {
+        padding: 4px 5px;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          background-color: $selection-blue;
+          outline: none;
+        }
+
+        .results-count {
+          @include font-smoothing(on);
+          font-weight: 600;
+        }
+
+        .category-name {
+          color: $lighter-blue;
+        }
+      }
+    }
+
+
+    .popular-products {
+      @extend %suggestions;
+
+      $products-per-line: 3;
+      $product-gutter: 15;
+
+      // Compute a product <li>'s width from the width of the container panel
+      // and the different padding applied here and there
+      @function product-width() {
+        $inner-width: $panel-width - 2 * $panel-border-width - 2 * $panel-padding;
+        @return ($inner-width - 2 * $product-gutter) / $products-per-line;
+      }
+
+      li {
+        display: inline-block;
+
+        color: $dark-blue;
+
+        $product-width: product-width();
+        width: #{$product-width}px;
+        height: #{$product-width / 1.52}px;
+
+        margin: #{$product-gutter / 2}px;
+        padding: 5px;
+
+        border: 1px solid $dark-blue;
+        border-radius: 5px;
+
+        vertical-align: top;
+        text-align: center;
+
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          border-color: $lighter-blue;
+          color: $lighter-blue;
+          outline: none;
+        }
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        .main-info:after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+
+        .picture {
+          float: left;
+
+          $pic-width: $product-width * 46.5 / 100;
+          width: #{$pic-width}px;
+          height: #{$pic-width * .8}px;
+
+          margin: 0 7px 7px 0;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        }
+
+        .price {
+          position: relative;
+          font-size: 1.5em;
+        }
+
+        .add-to-cart {
+          display: inline-block;
+
+          padding: 2px 4px;
+          padding-left: 16px;
+          border-radius: 2px;
+
+          background: transparent url('/images/cart.png') no-repeat top 3px left 2px;
+
+          font-size: .75em;
 
           &:hover,
           &:focus {
-            background-color: $selection-blue;
-            outline: none;
+            background: $lighter-blue url('/images/cart-inverted.png') no-repeat top 3px left 2px;
+            color: $white;
           }
+        }
 
-          .results-count {
-            @include font-smoothing(on);
-            font-weight: 600;
-          }
+        .name {
+          font-size: .75em;
+          text-align: center;
 
-          .category-name {
-            color: $lighter-blue;
+          em {
+            font-weight: 800;
+            font-style: normal;
           }
         }
       }

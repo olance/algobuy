@@ -178,15 +178,19 @@ class PopularProducts extends React.Component {
         return _.map(products, (product) => {
             return (
                 <li key={product.objectID}>
-                    <div className="picture">
-                        <img src={product.image} alt={product.name}/>
+                    <div className="main-info">
+                        <div className="picture">
+                            <img src={product.image} alt={product.name}/>
+                        </div>
+
+                        <div className="price">${product.price}</div>
+
+                        <div className="add-to-cart">ADD TO CART</div>
                     </div>
-                    <div className="price">${product.price}</div>
-                    <div className="add-to-cart">
-                        <img src="images/cart.png" alt="Cart"/>
-                        ADD TO CART
+
+                    <div className="name"
+                         dangerouslySetInnerHTML={{__html: product._highlightResult.name.value}}>
                     </div>
-                    <div className="name">{product.name}</div>
                 </li>
             );
         });
