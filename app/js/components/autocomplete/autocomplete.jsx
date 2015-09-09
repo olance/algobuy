@@ -5,6 +5,8 @@ import React from 'react';
 import {Container} from 'flux/utils';
 
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
+import OutsideClickHandler from './outside_click_handler.jsx';
+
 import SearchInput from './search_input.jsx';
 import SearchSuggestions from './search_suggestions.jsx';
 
@@ -40,13 +42,16 @@ class AutocompleteContainer extends React.Component {
         });
 
         return (
-            <div className={widgetClasses}>
-                <KeyboardNavGroup dir="vertical" autofocus
-                                  onEscape={this._handleEscape.bind(this)}>
 
-                    <SearchInput search={this.state}/>
-                    <SearchSuggestions search={this.state}/>
-                </KeyboardNavGroup>
+            <div className={widgetClasses}>
+                <OutsideClickHandler onClickOutside={this._outsideClick.bind(this)}>
+                    <KeyboardNavGroup dir="vertical" autofocus
+                                      onEscape={this._handleEscape.bind(this)}>
+
+                        <SearchInput search={this.state}/>
+                        <SearchSuggestions search={this.state}/>
+                    </KeyboardNavGroup>
+                </OutsideClickHandler>
             </div>
         );
     }
@@ -57,6 +62,13 @@ class AutocompleteContainer extends React.Component {
             QueryActions.queryCleared();
         }
         else
+        {
+            this.setState(_.extend({}, this.state, { closed: true }));
+        }
+    }
+
+    _outsideClick() {
+        if(!this.state.closed)
         {
             this.setState(_.extend({}, this.state, { closed: true }));
         }
