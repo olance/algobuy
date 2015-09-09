@@ -45,10 +45,8 @@ class AutocompleteContainer extends React.Component {
 
             <div className={widgetClasses}>
                 <OutsideClickHandler onClickOutside={this._outsideClick.bind(this)}>
-                    <KeyboardNavGroup dir="vertical" autofocus
-                                      onEscape={this._handleEscape.bind(this)}>
-
-                        <SearchInput search={this.state}/>
+                    <KeyboardNavGroup dir="vertical" autofocus onEscape={this._handleEscape.bind(this)}>
+                        <SearchInput search={this.state} onFocus={this._inputFocused.bind(this)}/>
                         <SearchSuggestions search={this.state}/>
                     </KeyboardNavGroup>
                 </OutsideClickHandler>
@@ -71,6 +69,13 @@ class AutocompleteContainer extends React.Component {
         if(!this.state.closed)
         {
             this.setState(_.extend({}, this.state, { closed: true }));
+        }
+    }
+
+    _inputFocused(event) {
+        if(this.state.closed)
+        {
+            this.setState(_.extend({}, this.state, { closed: false }));
         }
     }
 }

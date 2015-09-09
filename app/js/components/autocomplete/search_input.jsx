@@ -29,6 +29,7 @@ class SearchInput extends React.Component {
                        ref="searchInput"
                        value={this.props.search.query}
                        onChange={this.queryChanged.bind(this)}
+                       onFocus={this._onFocus.bind(this)}
                        data-nav-stop />
 
                 <div className="query-input-icon"
@@ -71,6 +72,13 @@ class SearchInput extends React.Component {
     // Private methods
     _focus() {
         React.findDOMNode(this.refs.searchInput).focus();
+    }
+
+    _onFocus(event) {
+        if(this.props.onFocus)
+        {
+            this.props.onFocus.call(null, event);
+        }
     }
 }
 
