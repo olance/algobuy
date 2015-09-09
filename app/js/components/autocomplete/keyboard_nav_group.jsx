@@ -121,7 +121,7 @@ class KeyboardNavGroup extends React.Component {
 
         // If no stop could be found and the group is configured to loop, then
         // go back to the first non-ignored stop in the group.
-        if(!$nextStop && this.props.loop)
+        if((!$nextStop || !$nextStop.length) && this.props.loop)
         {
             $nextStop = $groupStops.not($ignoreStops).first();
         }
