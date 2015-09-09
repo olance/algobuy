@@ -97,14 +97,21 @@ class PriceRangeTag extends React.Component {
         // and thus two identical requests to Algolia
         var debouncedHandler = debounce(this.clicked.bind(this), 20, true);
 
-        return (
-            <span className={className}
-                  onClick={debouncedHandler}
-                  onFocus={debouncedHandler}
-                  data-nav-stop tabIndex="-1">
-                {this.props.priceRange.name}
-            </span>
-        );
+        var attributes = {
+            className: className,
+            onClick: debouncedHandler,
+            onFocus: debouncedHandler,
+            'data-nav-stop': true,
+            tabIndex: -1
+        };
+
+        // If the tag is the active one, make it a nav priority target
+        if(this.props.priceRange.isRefined)
+        {
+            attributes['data-nav-priority'] = true;
+        }
+
+        return (<span {...attributes}>{this.props.priceRange.name}</span>);
     }
 
     clicked() {
@@ -196,9 +203,21 @@ class PopularProducts extends React.Component {
     _popularProducts() {
         var products = _.take(this.props.search.results.hits, 3);
 
-        return _.map(products, (product) => {
+        return _.map(products, (product, idx) => {
+            let attributes = {
+                key: product.objectID,
+                'data-nav-stop': true,
+                tabIndex: -1
+            };
+
+            // Always give priority to the first product in the list
+            if(idx === 0)
+            {
+                attributes['data-nav-priority'] = true;
+            }
+
             return (
-                <li key={product.objectID} data-nav-stop tabIndex="-1">
+                <li {...attributes}>
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
