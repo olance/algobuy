@@ -15,7 +15,7 @@ class SearchInput extends React.Component {
         // the focus back
         if(this.props.search.closed)
         {
-            this._focus();
+            this._focus(true);
         }
     }
 
@@ -70,12 +70,14 @@ class SearchInput extends React.Component {
     }
 
     // Private methods
-    _focus() {
+    _focus(silently) {
+        this.__silentFocus = silently;
         React.findDOMNode(this.refs.searchInput).focus();
+        this.__silentFocus = false;
     }
 
     _onFocus(event) {
-        if(this.props.onFocus)
+        if(this.props.onFocus && !this.__silentFocus)
         {
             this.props.onFocus.call(null, event);
         }
