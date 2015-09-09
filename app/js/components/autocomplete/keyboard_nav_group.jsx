@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import $ from 'jquery';
+import uuid from 'uuid';
 
 import React from 'react';
 
@@ -28,12 +29,28 @@ const DirMapping = {
 
 
 class KeyboardNavGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            groupID: uuid.v1()
+        };
+    }
+
     componentDidMount() {
+        var $group = this._$DOMElement(),
+            $groupStops = $group.find('[data-nav-stop]');
+
         // If the autofocus prop is set, find the first "nav stop" and focus it
         if(this.props.autofocus)
         {
-            this._$DOMElement().find('[data-nav-stop]').focus();
+            $groupStops.focus();
         }
+
+        // Find all nav stops that are direct children of this group and save
+        // the group's ID in their data
+        $groupStops.filter((idx, el) => {
+            return $(el).parentsUntil($group, '.keyboard-nav-group').length === 0;
+        }).data('nav-group-id', this.state.groupID);
     }
 
     render() {
@@ -86,7 +103,8 @@ class KeyboardNavGroup extends React.Component {
     // first/last stop; if we shouldn't loop, leave this event alone!
     _findTargetStop(event, backward = false) {
         var $navGroup = this._$DOMElement(),
-            $navStop = $(event.target).closest('[data-nav-stop]');
+            $navStop = $(event.target).closest('[data-nav-stop]'),
+            stopGroupID = $navStop.data('nav-group-id');
 
         // The event may have bubbled up from another (deeply-)nested
         // navigation group. If it couldn't be handled at a lower level, it
@@ -124,6 +142,26 @@ class KeyboardNavGroup extends React.Component {
         if((!$nextStop || !$nextStop.length) && this.props.loop)
         {
             $nextStop = $groupStops.not($ignoreStops).first();
+        }
+
+        if($nextStop && $nextStop.length)
+        {
+            // If we're navigating from one group to another, check whether another
+            // stop might have priority over the one we found within the group it
+            // belongs to.
+            var nextGroupID = $nextStop.data('nav-group-id');
+            if(nextGroupID !== stopGroupID)
+            {
+                let $priorityStop = $groupStops.filter('[data-nav-priority]')
+                    .filter((idx, el) => {
+                        return $(el).data('nav-group-id') == nextGroupID;
+                    });
+
+                if($priorityStop && $priorityStop.length)
+                {
+                    $nextStop = $priorityStop.first();
+                }
+            }
         }
 
         // Return whatever we have (or haven't) found
