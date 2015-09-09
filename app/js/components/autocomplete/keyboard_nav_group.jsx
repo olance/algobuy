@@ -9,8 +9,8 @@ const Keys = { enter: 13, esc: 27, tab: 9, up: 38, right: 39, down: 40, left: 37
 
 // These keys always trigger the same action
 const GenericMapping = {
-    [Keys.enter]: 'commit',
-    [Keys.esc]: 'cancel',
+    [Keys.enter]: 'enter',
+    [Keys.esc]: 'escape',
     [Keys.tab]: 'next'
 };
 
@@ -80,10 +80,10 @@ class KeyboardNavGroup extends React.Component {
                     handled = this._nextFocus(event);
                     break;
 
-                case 'commit':
+                case 'enter':
                     break;
 
-                case 'cancel':
+                case 'escape':
                     break;
             }
 
