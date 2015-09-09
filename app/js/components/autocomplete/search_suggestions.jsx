@@ -195,7 +195,7 @@ class PopularProducts extends React.Component {
 
                         <div className="price">${product.price}</div>
 
-                        <div className="add-to-cart">ADD TO CART</div>
+                        <div className="add-to-cart" data-nav-stop tabIndex="-1">ADD TO CART</div>
                     </div>
 
                     <div className="name"

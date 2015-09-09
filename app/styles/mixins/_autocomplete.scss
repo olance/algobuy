@@ -283,6 +283,7 @@
           &:focus {
             background: $lighter-blue url('/images/cart-inverted.png') no-repeat top 3px left 2px;
             color: $white;
+            outline: none;
           }
         }
 
