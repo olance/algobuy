@@ -50,7 +50,7 @@
       width: 27px;
       height: 27px;
 
-      background: transparent url('/images/clear-icon.png') no-repeat center center;
+      background: transparent url('../images/clear-icon.png') no-repeat center center;
       cursor: pointer;
 
       opacity: .6;
@@ -65,7 +65,7 @@
 
   &.empty {
     .query-input-icon {
-      background: transparent url('/images/search-icon.png') no-repeat center center;
+      background: transparent url('../images/search-icon.png') no-repeat center center;
       cursor: default;
       pointer-events: none;
     }
@@ -275,13 +275,13 @@
           padding-left: 16px;
           border-radius: 2px;
 
-          background: transparent url('/images/cart.png') no-repeat top 3px left 2px;
+          background: transparent url('../images/cart.png') no-repeat top 3px left 2px;
 
           font-size: .75em;
 
           &:hover,
           &:focus {
-            background: $lighter-blue url('/images/cart-inverted.png') no-repeat top 3px left 2px;
+            background: $lighter-blue url('../images/cart-inverted.png') no-repeat top 3px left 2px;
             color: $white;
             outline: none;
           }
