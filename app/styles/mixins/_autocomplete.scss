@@ -225,6 +225,11 @@
         &:hover,
         &:focus {
           border-color: $lighter-blue;
+          border-width: 2px;
+
+          // Compensate the larger border
+          padding: 4px;
+
           color: $lighter-blue;
           outline: none;
         }
