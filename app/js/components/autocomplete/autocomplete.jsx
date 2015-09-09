@@ -4,6 +4,7 @@ import cx from 'classnames';
 import React from 'react';
 import {Container} from 'flux/utils';
 
+import KeyboardNavGroup from './keyboard_nav_group.jsx';
 import SearchInput from './search_input.jsx';
 import SearchSuggestions from './search_suggestions.jsx';
 
@@ -38,8 +39,10 @@ class AutocompleteContainer extends React.Component {
 
         return (
             <div className={widgetClasses}>
-                <SearchInput query={this.state.query}/>
-                <SearchSuggestions search={this.state}/>
+                <KeyboardNavGroup dir="vertical" autofocus>
+                    <SearchInput query={this.state.query}/>
+                    <SearchSuggestions search={this.state}/>
+                </KeyboardNavGroup>
             </div>
         );
     }

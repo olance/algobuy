@@ -14,12 +14,13 @@ class SearchInput extends React.Component {
         return (
             <div className="search-input">
                 <input className="query" type="text"
-                       placeholder="Type something..." autoFocus="autofocus"
-                       autoComplete="off" spellCheck="false" autoCorrect="off"
+                       placeholder="Type something..." autoComplete="off"
+                       spellCheck="false" autoCorrect="off"
 
                        ref="searchInput"
                        value={this.props.query}
-                       onChange={this.queryChanged.bind(this)} />
+                       onChange={this.queryChanged.bind(this)}
+                       data-nav-stop />
 
                 <div className="query-input-icon"
                      onClick={this.inputIconClicked.bind(this)}></div>

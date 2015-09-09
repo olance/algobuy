@@ -8,6 +8,8 @@ import * as SearchConstants from 'constants/search_constants.js';
 import SearchActions from 'actions/search_actions';
 import Search from 'algolia/search.js';
 
+import KeyboardNavGroup from './keyboard_nav_group.jsx';
+
 // The SearchSuggestions component displays the panel that shows below the
 // search input, filling it with price filters and suggested searches/products.
 //
@@ -52,9 +54,11 @@ class SearchSuggestions extends React.Component {
 
             return (
                 <div className="search-suggestions">
-                    <div className="price-ranges">
-                        {ranges}
-                    </div>
+                    <KeyboardNavGroup dir="horizontal">
+                        <div className="price-ranges">
+                            {ranges}
+                        </div>
+                    </KeyboardNavGroup>
                     <CategoriesSearch search={this.props.search}/>
                     <PopularProducts search={this.props.search}/>
                 </div>
@@ -84,7 +88,9 @@ class PriceRangeTag extends React.Component {
         });
 
         return (
-            <span className={className} onClick={this.clicked.bind(this)}>
+            <span className={className}
+                  onClick={this.clicked.bind(this)}
+                  data-nav-stop tabIndex="-1">
                 {this.props.priceRange.name}
             </span>
         );
@@ -131,7 +137,7 @@ class CategoriesSearch extends React.Component {
             let pluralizedResults = pluralize('result', category.count);
 
             return (
-                <li key={category.name}>
+                <li key={category.name} data-nav-stop tabIndex="-1">
                     <span className="results-count">
                         {category.count} {pluralizedResults}
                     </span>
@@ -177,7 +183,7 @@ class PopularProducts extends React.Component {
 
         return _.map(products, (product) => {
             return (
-                <li key={product.objectID}>
+                <li key={product.objectID} data-nav-stop tabIndex="-1">
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
