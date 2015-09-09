@@ -128,9 +128,15 @@ class SearchStore extends Store {
 
 
     _updatePriceRanges(results) {
-        var ranges = results.getFacetValues('price_range');
-
-        currentPriceRanges.updateRanges(ranges);
+        if(results.nbHits > 0)
+        {
+            let ranges = results.getFacetValues('price_range');
+            currentPriceRanges.updateRanges(ranges);
+        }
+        else
+        {
+            currentPriceRanges.clear();
+        }
     }
 
     _handleSearchFailed() {
