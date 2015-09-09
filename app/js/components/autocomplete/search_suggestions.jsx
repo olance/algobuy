@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import cx from 'classnames';
 import pluralize from 'pluralize';
+import debounce from 'debounce';
 
 import React from 'react';
 
@@ -91,10 +92,15 @@ class PriceRangeTag extends React.Component {
             active: this.props.priceRange.isRefined
         });
 
+        // Create a debounced version of our click handler: clicking on a tag
+        // will also focus it, resulting in two calls to the handler in a row
+        // and thus two identical requests to Algolia
+        var debouncedHandler = debounce(this.clicked.bind(this), 20, true);
+
         return (
             <span className={className}
-                  onClick={this.clicked.bind(this)}
-                  onFocus={this.clicked.bind(this)}
+                  onClick={debouncedHandler}
+                  onFocus={debouncedHandler}
                   data-nav-stop tabIndex="-1">
                 {this.props.priceRange.name}
             </span>
