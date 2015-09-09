@@ -10,16 +10,26 @@ class SearchInput extends React.Component {
         this.state = {};
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        // If the search panel has been closed, make sure the search input gets
+        // the focus back
+        if(this.props.search.closed)
+        {
+            this._focus();
+        }
+    }
+
     render() {
         return (
             <div className="search-input">
                 <input className="query" type="text"
-                       placeholder="Type something..." autoFocus="autofocus"
-                       autoComplete="off" spellCheck="false" autoCorrect="off"
+                       placeholder="Type something..." autoComplete="off"
+                       spellCheck="false" autoCorrect="off"
 
                        ref="searchInput"
-                       value={this.props.query}
-                       onChange={this.queryChanged.bind(this)} />
+                       value={this.props.search.query}
+                       onChange={this.queryChanged.bind(this)}
+                       data-nav-stop />
 
                 <div className="query-input-icon"
                      onClick={this.inputIconClicked.bind(this)}></div>
@@ -47,7 +57,7 @@ class SearchInput extends React.Component {
         // `pointer-events: none` rule on the input-icon should prevent any
         // click event occurring when there's no query... so that's just in case
         // the CSS prop 'pointer-events' is not recognized.
-        if(_.isEmpty(this.props.query))
+        if(_.isEmpty(this.props.search.query))
         {
             this._focus();
             return;
