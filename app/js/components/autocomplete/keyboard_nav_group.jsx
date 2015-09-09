@@ -81,9 +81,11 @@ class KeyboardNavGroup extends React.Component {
                     break;
 
                 case 'enter':
+                    handled = this._onEnter(event);
                     break;
 
                 case 'escape':
+                    handled = this._onEscape(event);
                     break;
             }
 
@@ -196,6 +198,26 @@ class KeyboardNavGroup extends React.Component {
         }
     }
 
+    _onEnter(event) {
+        // Don't handle the event if no handler was provided
+        if(!this.props.onEnter)
+        {
+            return false;
+        }
+
+        return this.props.onEnter.call(null, event);
+    }
+
+    _onEscape(event) {
+        // Don't handle the event if no handler was provided
+        if(!this.props.onEscape)
+        {
+            return false;
+        }
+
+        return this.props.onEscape.call(null, event);
+    }
+
     _shouldHandleEvent(event) {
         // Check that the event's keyCode is bound to an action for this
         // NavGroup direction
@@ -218,7 +240,9 @@ class KeyboardNavGroup extends React.Component {
 KeyboardNavGroup.propTypes = {
     dir: React.PropTypes.string.isRequired,
     loop: React.PropTypes.bool,
-    autofocus: React.PropTypes.bool
+    autofocus: React.PropTypes.bool,
+    onEnter: React.PropTypes.func,
+    onEscape: React.PropTypes.func
 };
 
 KeyboardNavGroup.defaultProps = {
