@@ -115,7 +115,9 @@ class CategoriesSearch extends React.Component {
                 </div>
 
                 <ul className="list">
-                    {suggestions}
+                    <KeyboardNavGroup dir="vertical" loop={false}>
+                        {suggestions}
+                    </KeyboardNavGroup>
                 </ul>
             </div>
         );
@@ -169,7 +171,9 @@ class PopularProducts extends React.Component {
                 </div>
 
                 <ul className="list">
-                    {products}
+                    <KeyboardNavGroup dir="horizontal">
+                        {products}
+                    </KeyboardNavGroup>
                 </ul>
             </div>
         );
