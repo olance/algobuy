@@ -81,30 +81,31 @@ class KeyboardNavGroup extends React.Component {
         }
     }
 
-    _previousFocus(event) {
-
-    }
-
-    // Try to find the next stop within our nav group. If we don't find one,
-    // consider looping back to the first stop; if we shouldn't loop, leave
-    // this event alone!
-    _nextFocus(event) {
-        var handled = false,
-            $navGroup = this._$DOMElement(),
+    // Try to find the next/previous (depending on `backward` value) stop within
+    // our nav group. If we don't find one, consider looping back to the
+    // first/last stop; if we shouldn't loop, leave this event alone!
+    _findTargetStop(event, backward = false) {
+        var $navGroup = this._$DOMElement(),
             $navStop = $(event.target).closest('[data-nav-stop]');
 
         // The event may have bubbled up from another (deeply-)nested
         // navigation group. If it couldn't be handled at a lower level, it
         // means the stops within the groups that ignored the event should not
-        // be considered as possible next stops.
+        // be considered as possible target stops.
         // ----
-        // First, find the potential nested groups the event bubble up from
+        // First, find the potential nested groups the event bubbled up from
         var $ignoreGroups = $navStop.parentsUntil($navGroup, '.keyboard-nav-group'),
             // Now, the stops within those groups
             $ignoreStops = $ignoreGroups.find('[data-nav-stop]');
 
         // Find all stops wrapped by the current group
         var $groupStops = $navGroup.find('[data-nav-stop]');
+
+        // If we're going backward, simply reverse the stops order
+        if(backward)
+        {
+            $groupStops = Array.prototype.reverse.call($groupStops);
+        }
 
         // Find the position of the current stop within those stops
         var currentStopIdx = $groupStops.index($navStop),
@@ -125,14 +126,36 @@ class KeyboardNavGroup extends React.Component {
             $nextStop = $groupStops.not($ignoreStops).first();
         }
 
-        // Set focus on the stop we've found; the event has been taken care of.
-        if($nextStop)
-        {
-            $nextStop.focus();
-            handled = true;
-        }
+        // Return whatever we have (or haven't) found
+        return $nextStop;
+    }
 
-        return handled;
+    _previousFocus(event) {
+        var $stop = this._findTargetStop(event, true);
+
+        if($stop)
+        {
+            $stop.focus();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    _nextFocus(event) {
+        var $stop = this._findTargetStop(event);
+
+        if($stop)
+        {
+            $stop.focus();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     _shouldHandleEvent(event) {
