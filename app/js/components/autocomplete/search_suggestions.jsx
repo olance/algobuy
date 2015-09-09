@@ -32,7 +32,7 @@ class SearchSuggestions extends React.Component {
                 </div>
             );
         }
-        else if(emptyQuery)
+        else if(emptyQuery || this.props.search.closed)
         {
             return null;
         }

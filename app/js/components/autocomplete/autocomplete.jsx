@@ -8,6 +8,7 @@ import KeyboardNavGroup from './keyboard_nav_group.jsx';
 import SearchInput from './search_input.jsx';
 import SearchSuggestions from './search_suggestions.jsx';
 
+import QueryActions from 'actions/query_actions.js';
 import QueryStore from 'stores/query_store.js';
 import SearchStore from 'stores/search_store.js';
 
@@ -20,7 +21,7 @@ class AutocompleteContainer extends React.Component {
         return [QueryStore, SearchStore];
     }
 
-    static calculateState() {
+    static calculateState(prevState) {
         var searchResults = SearchStore.getResults();
 
         return {
@@ -28,7 +29,8 @@ class AutocompleteContainer extends React.Component {
             results: searchResults.results || searchResults,
             params: searchResults.params,
             priceRanges: SearchStore.getPriceRanges(),
-            error: SearchStore.getLastError()
+            error: SearchStore.getLastError(),
+            closed: false
         }
     }
 
@@ -39,12 +41,25 @@ class AutocompleteContainer extends React.Component {
 
         return (
             <div className={widgetClasses}>
-                <KeyboardNavGroup dir="vertical" autofocus>
-                    <SearchInput query={this.state.query}/>
+                <KeyboardNavGroup dir="vertical" autofocus
+                                  onEscape={this._handleEscape.bind(this)}>
+
+                    <SearchInput search={this.state}/>
                     <SearchSuggestions search={this.state}/>
                 </KeyboardNavGroup>
             </div>
         );
+    }
+
+    _handleEscape(event) {
+        if(this.state.closed)
+        {
+            QueryActions.queryCleared();
+        }
+        else
+        {
+            this.setState(_.extend({}, this.state, { closed: true }));
+        }
     }
 }
 
