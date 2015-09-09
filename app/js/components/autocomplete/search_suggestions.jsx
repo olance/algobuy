@@ -48,36 +48,40 @@ class SearchSuggestions extends React.Component {
         }
         else
         {
-            // Create a list of all available price range tags for the search
-            // results we received
-            let ranges = this._priceRangesList(this.props.search.priceRanges);
-
             return (
                 <div className="search-suggestions">
-                    <KeyboardNavGroup dir="horizontal">
-                        <div className="price-ranges">
-                            {ranges}
-                        </div>
-                    </KeyboardNavGroup>
+                    <PriceRangeList search={this.props.search}/>
                     <CategoriesSearch search={this.props.search}/>
                     <PopularProducts search={this.props.search}/>
                 </div>
             );
         }
     }
-
-    // Private methods
-    _priceRangesList(priceRanges) {
-        // Map all ranges to their tag
-        return priceRanges.map((range) => {
-            return <PriceRangeTag key={range.name} priceRange={range} />;
-        });;
-    }
 }
 
 export default SearchSuggestions;
 
 // PRIVATE COMPONENTS
+
+class PriceRangeList extends React.Component {
+    render() {
+        var priceRanges = this._priceRangesList();
+
+        return (
+            <KeyboardNavGroup dir="horizontal">
+                {priceRanges}
+            </KeyboardNavGroup>
+        );
+    }
+
+    // Private methods
+    _priceRangesList() {
+        // Map all ranges to their tag
+        return this.props.search.priceRanges.map((range) => {
+            return <PriceRangeTag key={range.name} priceRange={range} />;
+        });
+    }
+}
 
 // The PriceRangeTag represents a selectable price range used to refine the
 // current search.
@@ -90,6 +94,7 @@ class PriceRangeTag extends React.Component {
         return (
             <span className={className}
                   onClick={this.clicked.bind(this)}
+                  onFocus={this.clicked.bind(this)}
                   data-nav-stop tabIndex="-1">
                 {this.props.priceRange.name}
             </span>
