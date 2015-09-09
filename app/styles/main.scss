@@ -1,0 +1,37 @@
+@import 'normalize.css/normalize';
+
+@import 'partials/colors';
+@import 'partials/typography';
+@import 'partials/layout';
+@import 'partials/utils';
+
+@import 'mixins/autocomplete';
+
+
+html {
+  height: 100%;
+}
+
+body {
+  color: $white;
+
+  background-attachment: fixed;
+  background-color: $darker-blue;
+  background-image: linear-gradient(140deg, $light-blue 10%, $darker-blue 90%);
+  background-repeat: no-repeat;
+}
+
+header {
+  margin-bottom: 50px;
+}
+
+.content {
+  padding: 1px 0; // prevents margin collapsing
+  margin: 50px 0;
+
+  text-align: center;
+
+  .autocomplete {
+    @include autocomplete($width: 700, $height: 45);
+  }
+}

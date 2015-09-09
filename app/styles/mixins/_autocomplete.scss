@@ -1,0 +1,302 @@
+//
+//This mixin, once included, will generate rules for a customized auto-complete
+//widget.
+//
+//@param
+//
+@import 'font_smoothing';
+
+@mixin autocomplete($width: 250, $height: 25) {
+  display: inline-block;
+  position: relative;
+
+  width: #{$width}px;
+
+  color: $dark-grey;
+
+  text-align: left;
+
+  .search-input {
+    .query {
+      @include font-smoothing(on);
+
+      width: 100%;
+      height: #{$height}px;
+      padding: #{$height * .1}px #{$height * .2}px;
+      padding-right: 35px;
+
+      font-size: #{$height * .5}px;
+      font-weight: 300;
+      line-height: #{$height * .9}px;
+
+      border: 2px solid $dark-blue;
+      border-radius: 5px;
+
+      outline: none;
+
+      box-shadow: 3px 4px 5px 0 rgba(0, 0, 0, .2) inset;
+
+      &:hover,
+      &:focus {
+        border-color: $lighter-blue;
+      }
+    }
+
+    .query-input-icon {
+      position: absolute;
+      right: 7px;
+      top: 10px;
+
+      width: 27px;
+      height: 27px;
+
+      background: transparent url('/images/clear-icon.png') no-repeat center center;
+      cursor: pointer;
+
+      opacity: .6;
+    }
+  }
+
+  &:hover {
+    .query-input-icon {
+      opacity: 1;
+    }
+  }
+
+  &.empty {
+    .query-input-icon {
+      background: transparent url('/images/search-icon.png') no-repeat center center;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  .search-suggestions {
+    $panel-width: $width - 4;
+    $panel-padding: 10;
+    $panel-border-width: 1;
+
+    position: relative;
+    left: 50%;
+
+    width: #{$panel-width}px;
+
+    margin-left: -#{$width / 2 - 2}px;
+    padding: #{$panel-padding}px;
+
+    background-color: rgb(255, 255, 255);
+
+    border: #{$panel-border-width}px solid rgb(128, 128, 128);
+    border-top: 0;
+
+    box-shadow: 5px 9px 20px 0 rgba(0, 0, 0, .3);
+
+    &.no-results,
+    &.search-error {
+      @include font-smoothing(on);
+
+      text-align: center;
+
+      color: $medium-grey;
+
+      font-size: 1.5em;
+      font-weight: 300;
+
+      img {
+        vertical-align: bottom;
+        margin-left: 20px;
+      }
+    }
+
+    .price-range {
+      @include font-smoothing(on);
+
+      display: inline-block;
+
+      margin: 0 2px;
+      padding: 0 5px;
+
+      border: 1px solid $dark-blue;
+      border-radius: 5px;
+
+      color: $dark-blue;
+      background: $white;
+
+      font-size: .7em;
+      font-weight: 600;
+      line-height: 18px;
+
+      cursor: pointer;
+
+      &.active {
+        border-color: transparent;
+        color: $white;
+        background-color: $dark-blue;
+      }
+
+      &.highlighted,
+      &:hover,
+      &:focus {
+        border-color: transparent;
+        color: $white;
+        background-color: $lighter-blue;
+        outline: none;
+      }
+    }
+
+    %suggestions {
+      margin-top: 10px;
+      font-size: .875em;
+
+      .heading {
+        @include font-smoothing(on);
+
+        color: $dark-blue;
+        font-weight: 600;
+        border-bottom: 1px solid $dark-blue;
+      }
+
+      .list {
+        padding: 0;
+        margin: 0;
+
+        list-style-type: none;
+      }
+    }
+
+    .categories {
+      @extend %suggestions;
+
+      li {
+        padding: 4px 5px;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          background-color: $selection-blue;
+          outline: none;
+        }
+
+        .results-count {
+          @include font-smoothing(on);
+          font-weight: 600;
+        }
+
+        .category-name {
+          color: $lighter-blue;
+        }
+      }
+    }
+
+
+    .popular-products {
+      @extend %suggestions;
+
+      $products-per-line: 3;
+      $product-gutter: 15;
+
+      // Compute a product <li>'s width from the width of the container panel
+      // and the different padding applied here and there
+      @function product-width() {
+        $inner-width: $panel-width - 2 * $panel-border-width - 2 * $panel-padding;
+        @return ($inner-width - 2 * $product-gutter) / $products-per-line;
+      }
+
+      li {
+        display: inline-block;
+
+        color: $dark-blue;
+
+        $product-width: product-width();
+        width: #{$product-width}px;
+        height: #{$product-width / 1.52}px;
+
+        margin: #{$product-gutter / 2}px;
+        padding: 5px;
+
+        border: 1px solid $dark-blue;
+        border-radius: 5px;
+
+        vertical-align: top;
+        text-align: center;
+
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          border-color: $lighter-blue;
+          border-width: 2px;
+
+          // Compensate the larger border
+          padding: 4px;
+
+          color: $lighter-blue;
+          outline: none;
+        }
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+
+        .main-info:after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+
+        .picture {
+          float: left;
+
+          $pic-width: $product-width * 46.5 / 100;
+          width: #{$pic-width}px;
+          height: #{$pic-width * .8}px;
+
+          margin: 0 7px 7px 0;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        }
+
+        .price {
+          position: relative;
+          font-size: 1.5em;
+        }
+
+        .add-to-cart {
+          display: inline-block;
+
+          padding: 2px 4px;
+          padding-left: 16px;
+          border-radius: 2px;
+
+          background: transparent url('/images/cart.png') no-repeat top 3px left 2px;
+
+          font-size: .75em;
+
+          &:hover,
+          &:focus {
+            background: $lighter-blue url('/images/cart-inverted.png') no-repeat top 3px left 2px;
+            color: $white;
+            outline: none;
+          }
+        }
+
+        .name {
+          font-size: .75em;
+          text-align: center;
+
+          em {
+            font-weight: 800;
+            font-style: normal;
+          }
+        }
+      }
+    }
+  }
+}
