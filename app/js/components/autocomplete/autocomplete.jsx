@@ -5,7 +5,7 @@ import React from 'react';
 import {Container} from 'flux/utils';
 
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
-import OutsideClickHandler from './outside_click_handler.jsx';
+import OutsideClickHandler from 'components/outside_click_handler.jsx';
 
 import SearchInput from './search_input.jsx';
 import SearchSuggestions from './search_suggestions.jsx';
