@@ -39,7 +39,7 @@ class ResultsDisplayController extends React.Component {
                 });
 
                 content = (
-                    <Masonry>
+                    <Masonry options={{ transitionDuration: 0}}>
                         {products}
                     </Masonry>
                 );
