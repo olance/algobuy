@@ -9,6 +9,8 @@ import * as SearchConstants from 'constants/search_constants.js';
 import SearchActions from 'actions/search_actions';
 import Search from 'algolia/search.js';
 
+import CartActions from 'actions/cart_actions';
+
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
 // The SearchSuggestions component displays the panel that shows below the
@@ -225,7 +227,10 @@ class PopularProducts extends React.Component {
 
                         <div className="price">${product.price}</div>
 
-                        <div className="add-to-cart" data-nav-stop tabIndex="-1">ADD TO CART</div>
+                        <div className="add-to-cart"
+                             onKeyDown={this._addToCart.bind(this, product)}
+                             onClick={this._addToCart.bind(this, product)}
+                             data-nav-stop tabIndex="-1">ADD TO CART</div>
                     </div>
 
                     <div className="name"
@@ -234,5 +239,12 @@ class PopularProducts extends React.Component {
                 </li>
             );
         });
+    }
+
+    _addToCart(product, event) {
+        if(event.keyCode == 13 || event.type === 'click')
+        {
+            CartActions.productAdded(product);
+        }
     }
 }
