@@ -34,6 +34,11 @@ class CartController extends React.Component {
     }
 
     _iconClick() {
+        if(this.state.productsCount === 0)
+        {
+            return;
+        }
+
         var opened = !this.state.opened;
         this.setState(_.extend({}, this.state, { opened: opened }));
     }
