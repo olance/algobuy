@@ -162,8 +162,9 @@ class CategoriesSearch extends React.Component {
             return (
                 <li key={category.name}
                     data-nav-stop tabIndex="-1"
-                    onKeyDown={this._performSearch.bind(this, category.name)}
-                    onClick={this._performSearch.bind(this, category.name)}>
+                    onKeyDown={this._performSearch.bind(this, category.name, true)}
+                    onClick={this._performSearch.bind(this, category.name, true)}
+                    onFocus={this._performSearch.bind(this, category.name, false)}>
                     <span className="results-count">
                         {category.count} {pluralizedResults}
                     </span>
@@ -181,10 +182,10 @@ class CategoriesSearch extends React.Component {
         };
     }
 
-    _performSearch(category, event) {
-        if(event.keyCode == 13 || event.type === 'click')
+    _performSearch(category, preemptive, event) {
+        if(event.keyCode === 13 || event.type === 'click' || event.type === 'focus')
         {
-            DisplayActions.displaySearch(category);
+            DisplayActions.displaySearch(category, preemptive);
         }
     }
 }
@@ -231,8 +232,9 @@ class PopularProducts extends React.Component {
 
             return (
                 <li {...attributes}
-                    onKeyDown={this._displayProduct.bind(this, product)}
-                    onClick={this._displayProduct.bind(this, product)}>
+                    onKeyDown={this._displayProduct.bind(this, product, true)}
+                    onClick={this._displayProduct.bind(this, product, true)}
+                    onFocus={this._displayProduct.bind(this, product, false)}>
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
@@ -257,14 +259,20 @@ class PopularProducts extends React.Component {
     _addToCart(product, event) {
         if(event.keyCode == 13 || event.type === 'click')
         {
+            event.stopPropagation();
+            event.preventDefault();
+
             CartActions.productAdded(product);
         }
     }
 
-    _displayProduct(product, event) {
-        if(event.keyCode == 13 || event.type === 'click')
+    _displayProduct(product, preemptive, event) {
+        if(event.keyCode == 13 || event.type === 'click' || event.type === 'focus')
         {
-            DisplayActions.displayProduct(product);
+            event.stopPropagation();
+            event.preventDefault();
+
+            DisplayActions.displayProduct(product, preemptive);
         }
     }
 }
