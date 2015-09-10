@@ -7,13 +7,15 @@ import DisplayActions from 'actions/display_actions';
 
 import Search from 'algolia/search';
 
-var products = [],
-    displayType = null;
-
 export const DisplayTypes = {
     product: Symbol('DisplayTypeProduct'),
     search: Symbol('DisplayTypeSearch')
 };
+
+
+var products = [],
+    displayType = null,
+    preemptingNextDisplay = false;
 
 // The QueryStore keeps track of the current search query typed by the user
 class DisplayStore extends Store {
@@ -25,16 +27,29 @@ class DisplayStore extends Store {
         return displayType;
     }
 
+    isDisplayPreempting() {
+        // Preemption is a "transitory" state: once consumed, it is set back to
+        // false.
+        var preempt = preemptingNextDisplay;
+        preemptingNextDisplay = false;
+        return preempt;
+    }
+
     __onDispatch(action) {
         switch(action.type) {
             case DisplayConstants.DISPLAY_PRODUCT:
                 displayType = DisplayTypes.product;
                 products = [action.product];
+                preemptingNextDisplay = action.shouldClose;
 
                 this.__emitChange();
                 break;
 
             case DisplayConstants.DISPLAY_SEARCH:
+                // Change variable here but wait for the search results to come
+                // in to emit the change event
+                preemptingNextDisplay = action.shouldClose;
+
                 // Add a categories refinement to the current search
                 let refinements = _.cloneDeep(Search.getQueryParameter('facetsRefinements'));
 

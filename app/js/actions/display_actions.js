@@ -3,25 +3,27 @@ import * as DisplayConstants from 'constants/display_constants';
 
 export default class DisplayActions {
 
-    static displayProduct(product) {
+    static displayProduct(product, shouldClose) {
         Dispatcher.dispatch({
             type: DisplayConstants.DISPLAY_PRODUCT,
-            product: product
+            product,
+            shouldClose
         });
     }
 
-    static displaySearch(category) {
+    static displaySearch(category, shouldClose) {
         Dispatcher.dispatch({
             type: DisplayConstants.DISPLAY_SEARCH,
-            category: category
+            category,
+            shouldClose
         });
     }
 
     static displaySearchResults(category, results) {
         Dispatcher.dispatch({
             type: DisplayConstants.DISPLAY_SEARCH_RESULTS,
-            category: category,
-            results: results
+            category,
+            results
         })
     }
 
