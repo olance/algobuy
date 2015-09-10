@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import cx from 'classnames';
 import pluralize from 'pluralize';
-import debounce from 'debounce';
 
 import React from 'react';
 
@@ -98,7 +97,7 @@ class PriceRangeTag extends React.Component {
         // Create a debounced version of our click handler: clicking on a tag
         // will also focus it, resulting in two calls to the handler in a row
         // and thus two identical requests to Algolia
-        var debouncedHandler = debounce(this.clicked.bind(this), 20, true);
+        var debouncedHandler = _.debounce(this.clicked.bind(this), 20, true);
 
         var attributes = {
             className: className,
@@ -159,12 +158,18 @@ class CategoriesSearch extends React.Component {
         return _.map(categories, (category) => {
             let pluralizedResults = pluralize('result', category.count);
 
+            // Debounce our _performSearch handler to avoid triggering multiple
+            // searches when clicking (which focuses too)
+            let debouncedHandler = _.debounce(
+                this._performSearch.bind(this, category.name),
+                20, true);
+
             return (
                 <li key={category.name}
                     data-nav-stop tabIndex="-1"
-                    onKeyDown={this._performSearch.bind(this, category.name, true)}
-                    onClick={this._performSearch.bind(this, category.name, true)}
-                    onFocus={this._performSearch.bind(this, category.name, false)}>
+                    onKeyDown={debouncedHandler.bind(this, true)}
+                    onClick={debouncedHandler.bind(this, true)}
+                    onFocus={debouncedHandler.bind(this, false)}>
                     <span className="results-count">
                         {category.count} {pluralizedResults}
                     </span>
@@ -230,11 +235,15 @@ class PopularProducts extends React.Component {
                 attributes['data-nav-priority'] = true;
             }
 
+            // Debounce our _displayProduct handler to avoid triggering multiple
+            // searches when clicking (which focuses too)
+            var debouncedHandler = _.debounce(this._displayProduct.bind(this, product), 20, true);
+
             return (
                 <li {...attributes}
-                    onKeyDown={this._displayProduct.bind(this, product, true)}
-                    onClick={this._displayProduct.bind(this, product, true)}
-                    onFocus={this._displayProduct.bind(this, product, false)}>
+                    onKeyDown={debouncedHandler.bind(this, true)}
+                    onClick={debouncedHandler.bind(this, true)}
+                    onFocus={debouncedHandler.bind(this, false)}>
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
