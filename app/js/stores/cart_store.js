@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import {Store} from 'flux/utils';
 import * as CartConstants from 'constants/cart_constants.js';
 import Dispatcher from 'dispatcher/algobuy_dispatcher.js';
@@ -8,6 +10,10 @@ var products = [];
 class CartStore extends Store {
     getProductsCount() {
         return products.length;
+    }
+
+    getProducts() {
+        return _.cloneDeep(products);
     }
 
     __onDispatch(action) {
