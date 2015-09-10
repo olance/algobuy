@@ -20,7 +20,7 @@ class SearchInput extends React.Component {
 
         if(this.props.search.blur)
         {
-            this._blur(true);
+            this._blur();
         }
     }
 
