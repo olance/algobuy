@@ -13,6 +13,7 @@ import SearchSuggestions from './search_suggestions.jsx';
 import QueryActions from 'actions/query_actions.js';
 import QueryStore from 'stores/query_store.js';
 import SearchStore from 'stores/search_store.js';
+import DisplayStore from 'stores/display_store';
 
 // The AutocompleteContainer class is a wrapper around the components that form
 // the autocomplete widget, acting as a controller-view component: it subscribes
@@ -20,11 +21,12 @@ import SearchStore from 'stores/search_store.js';
 // in either of them.
 class AutocompleteContainer extends React.Component {
     static getStores() {
-        return [QueryStore, SearchStore];
+        return [QueryStore, SearchStore, DisplayStore];
     }
 
     static calculateState(prevState) {
-        var searchResults = SearchStore.getResults();
+        var searchResults = SearchStore.getResults(),
+            forceClose = DisplayStore.isDisplayPreempting();
 
         return {
             query: QueryStore.getQuery(),
@@ -32,7 +34,8 @@ class AutocompleteContainer extends React.Component {
             params: searchResults.params,
             priceRanges: SearchStore.getPriceRanges(),
             error: SearchStore.getLastError(),
-            closed: false
+            closed: forceClose,
+            blur: forceClose
         }
     }
 

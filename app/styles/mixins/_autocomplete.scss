@@ -76,7 +76,7 @@
     $panel-padding: 10;
     $panel-border-width: 1;
 
-    position: relative;
+    position: absolute;
     left: 50%;
 
     width: #{$panel-width}px;
@@ -90,6 +90,8 @@
     border-top: 0;
 
     box-shadow: 5px 9px 20px 0 rgba(0, 0, 0, .3);
+
+    z-index: 5;
 
     &.no-results,
     &.search-error {

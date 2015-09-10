@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import cx from 'classnames';
 import pluralize from 'pluralize';
-import debounce from 'debounce';
 
 import React from 'react';
 
@@ -10,6 +9,7 @@ import SearchActions from 'actions/search_actions';
 import Search from 'algolia/search.js';
 
 import CartActions from 'actions/cart_actions';
+import DisplayActions from 'actions/display_actions';
 
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
@@ -97,7 +97,7 @@ class PriceRangeTag extends React.Component {
         // Create a debounced version of our click handler: clicking on a tag
         // will also focus it, resulting in two calls to the handler in a row
         // and thus two identical requests to Algolia
-        var debouncedHandler = debounce(this.clicked.bind(this), 20, true);
+        var debouncedHandler = _.debounce(this.clicked.bind(this), 20, true);
 
         var attributes = {
             className: className,
@@ -158,13 +158,28 @@ class CategoriesSearch extends React.Component {
         return _.map(categories, (category) => {
             let pluralizedResults = pluralize('result', category.count);
 
+            // Debounce our _performSearch handler to avoid triggering multiple
+            // searches when clicking (which focuses too)
+            let debouncedHandler = _.debounce(
+                this._performSearch.bind(this, category.name),
+                20, true);
+
+            // Putting a div to wrap the inside of the <li> and separate the
+            // element that is able to receive focus from the element that will
+            // receiving click events. Otherwise, both events trigger in a row
+            // at random order and that causes UI/UX problems!
             return (
-                <li key={category.name} data-nav-stop tabIndex="-1">
-                    <span className="results-count">
-                        {category.count} {pluralizedResults}
-                    </span>
-                    {` for "${this.props.search.query}" in `}
-                    <span className="category-name">{category.name}</span>
+                <li key={category.name}
+                    data-nav-stop tabIndex="-1"
+                    onKeyDown={debouncedHandler.bind(this, true)}
+                    onFocus={debouncedHandler.bind(this, false)}>
+                    <div onClick={debouncedHandler.bind(this, true)}>
+                        <span className="results-count">
+                            {category.count} {pluralizedResults}
+                        </span>
+                        {` for "${this.props.search.query}" in `}
+                        <span className="category-name">{category.name}</span>
+                    </div>
                 </li>
             );
         });
@@ -175,6 +190,16 @@ class CategoriesSearch extends React.Component {
             name: 'All Departments',
             count: this.props.search.results.nbHits
         };
+    }
+
+    _performSearch(category, preemptive, event) {
+        if(event.keyCode === 13 || event.type === 'click' || event.type === 'focus')
+        {
+            event.stopPropagation();
+            event.preventDefault();
+
+            DisplayActions.displaySearch(category, preemptive);
+        }
     }
 }
 
@@ -218,23 +243,35 @@ class PopularProducts extends React.Component {
                 attributes['data-nav-priority'] = true;
             }
 
+            // Debounce our _displayProduct handler to avoid triggering multiple
+            // searches when clicking (which focuses too)
+            var debouncedHandler = _.debounce(this._displayProduct.bind(this, product), 20, true);
+
+            // Putting a div to wrap the inside of the <li> and separate the
+            // element that is able to receive focus from the element that will
+            // receiving click events. Otherwise, both events trigger in a row
+            // at random order and that causes UI/UX problems!
             return (
-                <li {...attributes}>
-                    <div className="main-info">
-                        <div className="picture">
-                            <img src={product.image} alt={product.name}/>
+                <li {...attributes}
+                    onKeyDown={debouncedHandler.bind(this, true)}
+                    onFocus={debouncedHandler.bind(this, false)}>
+                    <div onClick={debouncedHandler.bind(this, true)}>
+                        <div className="main-info">
+                            <div className="picture">
+                                <img src={product.image} alt={product.name}/>
+                            </div>
+
+                            <div className="price">${product.price}</div>
+
+                            <div className="add-to-cart"
+                                 onKeyDown={this._addToCart.bind(this, product)}
+                                 onClick={this._addToCart.bind(this, product)}
+                                 data-nav-stop tabIndex="-1">ADD TO CART</div>
                         </div>
 
-                        <div className="price">${product.price}</div>
-
-                        <div className="add-to-cart"
-                             onKeyDown={this._addToCart.bind(this, product)}
-                             onClick={this._addToCart.bind(this, product)}
-                             data-nav-stop tabIndex="-1">ADD TO CART</div>
-                    </div>
-
-                    <div className="name"
-                         dangerouslySetInnerHTML={{__html: product._highlightResult.name.value}}>
+                        <div className="name"
+                             dangerouslySetInnerHTML={{__html: product._highlightResult.name.value}}>
+                        </div>
                     </div>
                 </li>
             );
@@ -244,7 +281,20 @@ class PopularProducts extends React.Component {
     _addToCart(product, event) {
         if(event.keyCode == 13 || event.type === 'click')
         {
+            event.stopPropagation();
+            event.preventDefault();
+
             CartActions.productAdded(product);
+        }
+    }
+
+    _displayProduct(product, preemptive, event) {
+        if(event.keyCode == 13 || event.type === 'click' || event.type === 'focus')
+        {
+            event.stopPropagation();
+            event.preventDefault();
+
+            DisplayActions.displayProduct(product, preemptive);
         }
     }
 }
