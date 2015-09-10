@@ -10,6 +10,7 @@ import SearchActions from 'actions/search_actions';
 import Search from 'algolia/search.js';
 
 import CartActions from 'actions/cart_actions';
+import DisplayActions from 'actions/display_actions';
 
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
@@ -159,7 +160,10 @@ class CategoriesSearch extends React.Component {
             let pluralizedResults = pluralize('result', category.count);
 
             return (
-                <li key={category.name} data-nav-stop tabIndex="-1">
+                <li key={category.name}
+                    data-nav-stop tabIndex="-1"
+                    onKeyDown={this._performSearch.bind(this, category.name)}
+                    onClick={this._performSearch.bind(this, category.name)}>
                     <span className="results-count">
                         {category.count} {pluralizedResults}
                     </span>
@@ -175,6 +179,13 @@ class CategoriesSearch extends React.Component {
             name: 'All Departments',
             count: this.props.search.results.nbHits
         };
+    }
+
+    _performSearch(category, event) {
+        if(event.keyCode == 13 || event.type === 'click')
+        {
+            DisplayActions.displaySearch(category);
+        }
     }
 }
 
@@ -219,7 +230,9 @@ class PopularProducts extends React.Component {
             }
 
             return (
-                <li {...attributes}>
+                <li {...attributes}
+                    onKeyDown={this._displayProduct.bind(this, product)}
+                    onClick={this._displayProduct.bind(this, product)}>
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
@@ -245,6 +258,13 @@ class PopularProducts extends React.Component {
         if(event.keyCode == 13 || event.type === 'click')
         {
             CartActions.productAdded(product);
+        }
+    }
+
+    _displayProduct(product, event) {
+        if(event.keyCode == 13 || event.type === 'click')
+        {
+            DisplayActions.displayProduct(product);
         }
     }
 }
