@@ -13,9 +13,14 @@ class SearchInput extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         // If the search panel has been closed, make sure the search input gets
         // the focus back
-        if(this.props.search.closed)
+        if(this.props.search.closed && !this.props.search.blur)
         {
             this._focus(true);
+        }
+
+        if(this.props.search.blur)
+        {
+            this._blur(true);
         }
     }
 
@@ -54,7 +59,7 @@ class SearchInput extends React.Component {
         }
     }
 
-    inputIconClicked() {
+    inputIconClicked(event) {
         // `pointer-events: none` rule on the input-icon should prevent any
         // click event occurring when there's no query... so that's just in case
         // the CSS prop 'pointer-events' is not recognized.
@@ -66,7 +71,7 @@ class SearchInput extends React.Component {
 
         // Clear the current query and focus back the text input
         QueryActions.queryCleared();
-        this._focus();
+        this._focus(true);
     }
 
     // Private methods
@@ -74,6 +79,10 @@ class SearchInput extends React.Component {
         this.__silentFocus = silently;
         React.findDOMNode(this.refs.searchInput).focus();
         this.__silentFocus = false;
+    }
+
+    _blur() {
+        React.findDOMNode(this.refs.searchInput).blur();
     }
 
     _onFocus(event) {

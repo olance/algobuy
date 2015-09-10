@@ -25,7 +25,8 @@ class AutocompleteContainer extends React.Component {
     }
 
     static calculateState(prevState) {
-        var searchResults = SearchStore.getResults();
+        var searchResults = SearchStore.getResults(),
+            forceClose = DisplayStore.isDisplayPreempting();
 
         return {
             query: QueryStore.getQuery(),
@@ -33,7 +34,8 @@ class AutocompleteContainer extends React.Component {
             params: searchResults.params,
             priceRanges: SearchStore.getPriceRanges(),
             error: SearchStore.getLastError(),
-            closed: DisplayStore.isDisplayPreempting()
+            closed: forceClose,
+            blur: forceClose
         }
     }
 
