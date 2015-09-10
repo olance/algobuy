@@ -46,11 +46,11 @@ class KeyboardNavGroup extends React.Component {
             $groupStops.focus();
         }
 
-        // Find all nav stops that are direct children of this group and save
-        // the group's ID in their data
-        $groupStops.filter((idx, el) => {
-            return $(el).parentsUntil($group, '.keyboard-nav-group').length === 0;
-        }).data('nav-group-id', this.state.groupID);
+        this._setGroupID($groupStops);
+    }
+
+    componentDidUpdate() {
+        this._setGroupID(this._$DOMElement().find('[data-nav-stop]'));
     }
 
     render() {
@@ -63,6 +63,14 @@ class KeyboardNavGroup extends React.Component {
                 {this.props.children}
             </div>
         );
+    }
+
+    _setGroupID($groupStops) {
+        // Find all nav stops that are direct children of this group and save
+        // the group's ID in their data
+        $groupStops.filter((idx, el) => {
+            return $(el).parentsUntil(this._$DOMElement(), '.keyboard-nav-group').length === 0;
+        }).data('nav-group-id', this.state.groupID);
     }
 
     _handleKeyDown(event) {
