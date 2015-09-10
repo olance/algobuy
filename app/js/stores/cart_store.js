@@ -12,7 +12,10 @@ class CartStore extends Store {
 
     __onDispatch(action) {
         switch(action.type) {
-
+            case CartConstants.PRODUCT_ADDED:
+                products.push(action.product);
+                this.__emitChange();
+                break;
         }
     }
 }
