@@ -23,6 +23,117 @@ body {
 
 header {
   margin-bottom: 50px;
+
+  .cart {
+    position: fixed;
+    top: 50px;
+    right: 50px;
+
+    z-index: 10;
+
+    .cart-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      width: 51px;
+      height: 51px;
+
+      background: transparent url('../images/large-cart-idle.png') no-repeat center center;
+
+      cursor: pointer;
+
+      z-index: 5;
+
+      &:hover {
+        background-image: url('../images/large-cart-hover.png');
+      }
+
+      .cart-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+
+        width: 18px;
+
+        &:after {
+          content: '';
+          display: block;
+
+          width: 100%;
+          height: 0;
+
+          background-color: $magenta;
+
+          padding-bottom: 100%;
+          border-radius: 50%;
+        }
+
+        div {
+          @include font-smoothing(on);
+
+          float: left;
+          width: 100%;
+
+          padding-top: 50%;
+          margin-top: -.5em;
+
+          color: $white;
+
+          text-align: center;
+
+          font-size: .65em;
+          font-weight: 600;
+
+          line-height: 1em;
+        }
+      }
+    }
+
+    .products {
+      position: absolute;
+      top: -10px;
+      right: -15px;
+
+      width: 500px;
+
+      padding: 10px;
+      padding-right: 75px;
+
+      background: $dark-blue;
+      border: 1px solid $light-blue;
+
+      ul {
+        padding: 0;
+        margin: 0;
+
+        list-style-type: none;
+
+        li {
+          @include font-smoothing(on);
+
+          padding: 10px 0;
+
+          color: $white;
+          font-size: .8em;
+
+          border-bottom: 1px solid $light-blue;
+
+          &:last-child {
+            border-bottom-width: 0;
+          }
+
+          .price {
+            @include font-smoothing(on);
+
+            display: inline-block;
+            margin-right: 10px;
+            font-weight: 800;
+          }
+        }
+      }
+    }
+  }
 }
 
 .content {
