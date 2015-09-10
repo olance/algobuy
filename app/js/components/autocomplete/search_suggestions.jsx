@@ -231,70 +231,93 @@ class PopularProducts extends React.Component {
         var products = _.take(this.props.search.results.hits, 3);
 
         return _.map(products, (product, idx) => {
-            let attributes = {
-                key: product.objectID,
-                'data-nav-stop': true,
-                tabIndex: -1
+            // Always give priority to the first product in the list
+            let priority = {
+                navPriority: idx === 0
             };
 
-            // Always give priority to the first product in the list
-            if(idx === 0)
-            {
-                attributes['data-nav-priority'] = true;
-            }
-
-            // Debounce our _displayProduct handler to avoid triggering multiple
-            // searches when clicking (which focuses too)
-            var debouncedHandler = _.debounce(this._displayProduct.bind(this, product), 20, true);
-
-            // Putting a div to wrap the inside of the <li> and separate the
-            // element that is able to receive focus from the element that will
-            // receiving click events. Otherwise, both events trigger in a row
-            // at random order and that causes UI/UX problems!
-            return (
-                <li {...attributes}
-                    onKeyDown={debouncedHandler.bind(this, true)}
-                    onFocus={debouncedHandler.bind(this, false)}>
-                    <div onClick={debouncedHandler.bind(this, true)}>
-                        <div className="main-info">
-                            <div className="picture">
-                                <img src={product.image} alt={product.name}/>
-                            </div>
-
-                            <div className="price">${product.price}</div>
-
-                            <div className="add-to-cart"
-                                 onKeyDown={this._addToCart.bind(this, product)}
-                                 onClick={this._addToCart.bind(this, product)}
-                                 data-nav-stop tabIndex="-1">ADD TO CART</div>
-                        </div>
-
-                        <div className="name"
-                             dangerouslySetInnerHTML={{__html: product._highlightResult.name.value}}>
-                        </div>
-                    </div>
-                </li>
-            );
+            return <Product key={product.objectID} product={product} {...priority}/>
         });
     }
+}
 
-    _addToCart(product, event) {
+class Product extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            highlight: false
+        };
+    }
+
+    render() {
+        // Debounce our _displayProduct handler to avoid triggering multiple
+        // searches when clicking (which focuses too)
+        var debouncedHandler = _.debounce(this._display.bind(this), 20, true);
+
+        var attributes = {
+            'data-nav-stop': true,
+            tabIndex: -1,
+            'data-nav-priority': this.props.navPriority,
+
+            onKeyDown: debouncedHandler.bind(this, true),
+            onFocus: debouncedHandler.bind(this, false)
+        };
+
+        var product = this.props.product,
+            classes = cx({ highlight: this.state.highlight });
+
+        // Putting a div to wrap the inside of the <li> and separate the
+        // element that is able to receive focus from the element that will
+        // receiving click events. Otherwise, both events trigger in a row
+        // at random order and that causes UI/UX problems!
+        return (
+            <li {...attributes} className={classes}>
+                <div onClick={debouncedHandler.bind(this, true)}>
+                    <div className="main-info">
+                        <div className="picture">
+                            <img src={product.image} alt={product.name}/>
+                        </div>
+
+                        <div className="price">${product.price}</div>
+
+                        <div className="add-to-cart"
+                             onFocus={this._setHighlightState.bind(this, true)}
+                             onBlur={this._setHighlightState.bind(this, false)}
+
+                             onKeyDown={this._addToCart.bind(this)}
+                             onClick={this._addToCart.bind(this)}
+                             data-nav-stop tabIndex="-1">ADD TO CART</div>
+                    </div>
+
+                    <div className="name"
+                         dangerouslySetInnerHTML={{__html: product._highlightResult.name.value}}>
+                    </div>
+                </div>
+            </li>
+        );
+    }
+
+    _setHighlightState(highlight) {
+        this.setState(_.extend({}, this.state, { highlight }));
+    }
+
+    _addToCart(event) {
         if(event.keyCode == 13 || event.type === 'click')
         {
             event.stopPropagation();
             event.preventDefault();
 
-            CartActions.productAdded(product);
+            CartActions.productAdded(this.props.product);
         }
     }
 
-    _displayProduct(product, preemptive, event) {
+    _display(preemptive, event) {
         if(event.keyCode == 13 || event.type === 'click' || event.type === 'focus')
         {
             event.stopPropagation();
             event.preventDefault();
 
-            DisplayActions.displayProduct(product, preemptive);
+            DisplayActions.displayProduct(this.props.product, preemptive);
         }
     }
 }
