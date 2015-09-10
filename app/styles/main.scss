@@ -29,13 +29,21 @@ header {
     top: 50px;
     right: 50px;
 
+    z-index: 10;
+
     .cart-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+
       width: 51px;
       height: 51px;
 
       background: transparent url('../images/large-cart-idle.png') no-repeat center center;
 
       cursor: pointer;
+
+      z-index: 5;
 
       &:hover {
         background-image: url('../images/large-cart-hover.png');
@@ -74,10 +82,54 @@ header {
 
           text-align: center;
 
-          font-size: 0.65em;
+          font-size: .65em;
           font-weight: 600;
 
           line-height: 1em;
+        }
+      }
+    }
+
+    .products {
+      position: absolute;
+      top: -10px;
+      right: -15px;
+
+      width: 500px;
+
+      padding: 10px;
+      padding-right: 75px;
+
+      background: $dark-blue;
+      border: 1px solid $light-blue;
+
+      ul {
+        padding: 0;
+        margin: 0;
+
+        list-style-type: none;
+
+        li {
+          @include font-smoothing(on);
+
+          padding: 10px 0;
+
+          color: $white;
+          font-size: .8em;
+
+          border-bottom: 1px solid $light-blue;
+
+          &:last-child {
+            border-bottom-width: 0;
+          }
+
+          .price {
+            @include font-smoothing(on);
+
+            display: inline-block;
+            margin-right: 10px;
+            font-weight: 800;
+          }
         }
       }
     }
