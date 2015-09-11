@@ -162,7 +162,7 @@ class KeyboardNavGroup extends React.Component {
             var nextGroupID = $nextStop.data('nav-group-id');
             if(nextGroupID !== stopGroupID)
             {
-                let $priorityStop = $groupStops.filter('[data-nav-priority]')
+                let $priorityStop = $groupStops.filter('[data-nav-priority=true]')
                     .filter((idx, el) => {
                         return $(el).data('nav-group-id') == nextGroupID;
                     });
