@@ -11,6 +11,9 @@ import Search from 'algolia/search.js';
 import CartActions from 'actions/cart_actions';
 import DisplayActions from 'actions/display_actions';
 
+import TooltipActions from 'actions/tooltip_actions';
+import {Tooltips} from 'constants/tooltip_constants';
+
 import Tooltip from './tooltip.jsx';
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
@@ -118,8 +121,13 @@ class PriceRangeTag extends React.Component {
         return (<span {...attributes}>{this.props.priceRange.name}</span>);
     }
 
-    clicked() {
+    clicked(event) {
         SearchActions.priceRangeChanged(this.props.priceRange.name);
+
+        if(event.type === 'focus')
+        {
+            TooltipActions.changeTooltip(Tooltips.priceRange);
+        }
     }
 }
 
@@ -212,6 +220,11 @@ class CategorySearch extends React.Component {
             event.preventDefault();
 
             DisplayActions.displaySearch(this.props.category.name, preemptive);
+        }
+
+        if(event.type === 'focus')
+        {
+            TooltipActions.changeTooltip(Tooltips.search);
         }
     }
 
@@ -329,6 +342,8 @@ class Product extends React.Component {
 
     _setHighlightState(highlight) {
         this.setState(_.extend({}, this.state, { highlight }));
+
+        TooltipActions.changeTooltip(Tooltips.cart);
     }
 
     _addToCart(event) {
@@ -348,6 +363,11 @@ class Product extends React.Component {
             event.preventDefault();
 
             DisplayActions.displayProduct(this.props.product, preemptive);
+        }
+
+        if(event.type === 'focus')
+        {
+            TooltipActions.changeTooltip(Tooltips.product);
         }
     }
 }

@@ -12,7 +12,7 @@ class Tooltip extends React.Component {
     }
 
     componentDidMount() {
-        this._tooltipListener = TooltipStore.addListener('change', this._tooltipChanged.bind(this));
+        this._tooltipListener = TooltipStore.addListener(this._tooltipChanged.bind(this));
     }
 
     componentWillUnmount() {
