@@ -123,6 +123,17 @@ header {
             border-bottom-width: 0;
           }
 
+          .remove {
+            position: relative;
+            top: -1px;
+
+            display: inline-block;
+
+            margin-right: 10px;
+
+            cursor: pointer;
+          }
+
           .price {
             @include font-smoothing(on);
 
@@ -168,8 +179,6 @@ header {
     -o-transition: transform .2s ease-out, box-shadow .2s;
     transition: transform .2s ease-out, box-shadow .2s;
 
-    cursor: pointer;
-
     &:hover {
       -webkit-transform: scale(1.05);
       -moz-transform: scale(1.05);
@@ -180,10 +189,17 @@ header {
       box-shadow: 3px 4px 15px 0 rgba(0, 0, 0, .6);
     }
 
-    &.in-cart {
+    &.button-hover {
       border-color: $green;
     }
 
+    &.in-cart {
+      border-color: $green;
+
+      &.button-hover {
+        border-color: $red;
+      }
+    }
 
     .picture {
       text-align: center;
@@ -237,12 +253,23 @@ header {
       background-color: $light-grey;
 
       cursor: pointer;
+
+      &:hover {
+        background-color: $green;
+      }
     }
 
     .in-cart {
       @extend %cart-badge;
 
       background-color: $green;
+    }
+
+    .remove-from-cart {
+      @extend %cart-badge;
+
+      background-color: $red;
+      cursor: pointer;
     }
 
     &.large {

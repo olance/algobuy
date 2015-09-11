@@ -7,7 +7,6 @@ import Dispatcher from 'dispatcher/algobuy_dispatcher.js';
 var products = [];
 
 // The CartStore keeps track of the products added to the shopping cart
-// (its a very basic cart, one can just add products to it and get the list!)
 class CartStore extends Store {
     getProductsCount() {
         return products.length;
@@ -25,6 +24,11 @@ class CartStore extends Store {
         switch(action.type) {
             case CartConstants.PRODUCT_ADDED:
                 products.push(action.product);
+                this.__emitChange();
+                break;
+
+            case CartConstants.PRODUCT_REMOVED:
+                products = _.reject(products, 'objectID', action.product.objectID);
                 this.__emitChange();
                 break;
         }

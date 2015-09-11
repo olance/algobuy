@@ -323,7 +323,8 @@ class Product extends BaseProduct {
                         <AddToCartButton inCart={this.state.inCart}
                                          onFocus={this._setHighlightState.bind(this, true)}
                                          onBlur={this._setHighlightState.bind(this, false)}
-                                         onAction={this._addToCart.bind(this)}/>
+                                         onAdd={this._addToCart.bind(this)}
+                                         onRemove={this._removeFromCart.bind(this)}/>
                     </div>
 
                     <div className="name"
@@ -341,8 +342,6 @@ class Product extends BaseProduct {
 
     _setHighlightState(highlight) {
         this.setState(_.extend({}, this.state, { highlight }));
-
-        TooltipActions.changeTooltip(Tooltips.cart);
     }
 
     _addToCart(event) {
@@ -352,6 +351,16 @@ class Product extends BaseProduct {
             event.preventDefault();
 
             this.addToCart();
+        }
+    }
+
+    _removeFromCart(event) {
+        if(event.keyCode == 13 || event.type === 'click')
+        {
+            event.stopPropagation();
+            event.preventDefault();
+
+            this.removeFromCart();
         }
     }
 
@@ -373,21 +382,73 @@ class Product extends BaseProduct {
 
 // A component for the "Add to cart" button
 class AddToCartButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            active: false
+        };
+    }
+
     render() {
         if(this.props.inCart)
         {
-            return (<span className="in-cart">IN CART</span>);
+            let attributes = {
+                className: cx({
+                    'in-cart': !this.state.active,
+                    'remove-from-cart': this.state.active
+                }),
+
+                onMouseLeave: this._setActive.bind(this, false),
+                onMouseEnter: this._setActive.bind(this, true),
+
+                onFocus: this._onFocus.bind(this),
+                onBlur: this._onBlur.bind(this),
+
+                onKeyDown: this.props.onRemove,
+                onClick: this.props.onRemove
+            };
+
+            return (
+                <span {...attributes} tabIndex="-1" data-nav-stop>
+                    {this.state.active ? 'REMOVE' : 'IN CART'}
+                </span>
+            );
         }
         else
         {
             return (
-                <div className="add-to-cart"
-                     onFocus={this.props.onFocus}
-                     onBlur={this.props.onBlur}
-                     onKeyDown={this.props.onAction}
-                     onClick={this.props.onAction}
-                     data-nav-stop tabIndex="-1">ADD TO CART</div>
+                <span className="add-to-cart"
+                     onFocus={this._onFocus.bind(this)}
+                     onBlur={this._onBlur.bind(this)}
+                     onKeyDown={this.props.onAdd}
+                     onClick={this.props.onAdd}
+                     data-nav-stop tabIndex="-1">ADD TO CART</span>
             );
         }
+    }
+
+    // Private methods
+    _setActive(active) {
+        this.setState({ active });
+    }
+
+    _onFocus(event) {
+        this._setActive(true);
+        this.props.onFocus(event);
+
+        if(this.props.inCart)
+        {
+            TooltipActions.changeTooltip(Tooltips.removeFromCart);
+        }
+        else
+        {
+            TooltipActions.changeTooltip(Tooltips.addToCart);
+        }
+    }
+
+    _onBlur(event) {
+        this._setActive(false);
+        this.props.onBlur(event);
     }
 }

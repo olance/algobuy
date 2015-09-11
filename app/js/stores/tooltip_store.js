@@ -10,7 +10,8 @@ const availableTooltips = {
     [Tooltips.priceRange]: 'Select a price range to refine your search',
     [Tooltips.search]: 'Hit [Enter] to view the results for this search',
     [Tooltips.product]: 'Hit [Enter] to view the details of this product',
-    [Tooltips.cart]: 'Hit [Enter] to add this product to your shopping cart'
+    [Tooltips.addToCart]: 'Hit [Enter] to add this product to your shopping cart',
+    [Tooltips.removeFromCart]: 'Hit [Enter] to remove this product from your shopping cart'
 };
 
 var currentTooltip = Tooltips.default;
