@@ -6,6 +6,7 @@ import React from 'react';
 import QueryActions from 'actions/query_actions.js';
 import TooltipActions from 'actions/tooltip_actions';
 import {Tooltips} from 'constants/tooltip_constants';
+import DisplayActions from 'actions/display_actions';
 
 
 class SearchInput extends React.Component {
@@ -41,6 +42,7 @@ class SearchInput extends React.Component {
                        value={this.props.search.query}
                        onChange={this.queryChanged.bind(this)}
                        onFocus={this._onFocus.bind(this)}
+                       onKeyDown={this._defaultQuery.bind(this)}
                        data-nav-stop />
 
                 <div className="query-input-icon"
@@ -98,6 +100,13 @@ class SearchInput extends React.Component {
         }
 
         TooltipActions.changeTooltip(Tooltips.default);
+    }
+
+    _defaultQuery(event) {
+        if(event.keyCode == 13)
+        {
+            DisplayActions.displaySearch('All Departments', true);
+        }
     }
 }
 
