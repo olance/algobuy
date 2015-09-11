@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import cx from 'classnames';
 import pluralize from 'pluralize';
 
@@ -60,11 +61,17 @@ export default Container.create(ResultsDisplayController)
 
 // PRIVATE COMPONENTS
 class Product extends BaseProduct {
+    constructor(props) {
+        super(props);
+        this.state.willRemove = false;
+    }
+
     render() {
         var classes = cx({
             product: true,
             large: this.props.large,
-            'in-cart': this.state.inCart
+            'in-cart': this.state.inCart,
+            'button-hover': this.state.buttonHover
         });
 
         var product = this.props.product;
@@ -82,27 +89,65 @@ class Product extends BaseProduct {
                        dangerouslySetInnerHTML={{__html: product._highlightResult.description.value}}></p>
                 </div>
 
-                <AddToCartButton inCart={this.state.inCart} onClick={this.addToCart.bind(this)}/>
+                <AddToCartButton inCart={this.state.inCart}
+                                 onAdd={this.addToCart.bind(this)}
+                                 onRemove={this.removeFromCart.bind(this)}
+                                 onMouseEnter={this._setButtonHover.bind(this, true)}
+                                 onMouseLeave={this._setButtonHover.bind(this, false)}/>
             </div>
         );
+    }
+
+    // Private methods
+    _setButtonHover(hover) {
+        this.setState(_.extend({}, this.state, { buttonHover: hover }));
     }
 }
 
 class AddToCartButton extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            active: false
+        };
+    }
+
     render() {
-        if(this.props.inCart)
+        var inCart = this.props.inCart,
+            active = this.state.active,
+
+            attributes = {
+            className: cx({
+                'add-to-cart': !inCart,
+                'in-cart': inCart && !active,
+                'remove-from-cart': inCart && active
+            }),
+
+            onMouseLeave: this._setActive.bind(this, false),
+            onMouseEnter: this._setActive.bind(this, true),
+
+            onClick: inCart ? this.props.onRemove : this.props.onAdd
+        };
+
+        var inCartText = active ? 'REMOVE FROM CART' : 'IN CART',
+            text = inCart ? inCartText : 'ADD TO CART';
+
+
+        return <div {...attributes}>{text}</div>;
+    }
+
+    // Private methods
+    _setActive(active) {
+        this.setState({ active });
+
+        if(active)
         {
-            return (
-                <div className="in-cart">IN CART</div>
-            );
+            this.props.onMouseEnter();
         }
         else
         {
-            return (
-                <div className="add-to-cart" onClick={this.props.onClick}>
-                    ADD TO CART
-                </div>
-            );
+            this.props.onMouseLeave();
         }
     }
 }
