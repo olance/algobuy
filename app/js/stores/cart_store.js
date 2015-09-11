@@ -6,7 +6,8 @@ import Dispatcher from 'dispatcher/algobuy_dispatcher.js';
 
 var products = [];
 
-// The QueryStore keeps track of the current search query typed by the user
+// The CartStore keeps track of the products added to the shopping cart
+// (its a very basic cart, one can just add products to it and get the list!)
 class CartStore extends Store {
     getProductsCount() {
         return products.length;
