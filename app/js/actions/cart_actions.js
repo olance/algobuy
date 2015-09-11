@@ -10,4 +10,11 @@ export default class CartActions {
         });
     }
 
+    static productRemoved(product) {
+        Dispatcher.dispatch({
+            type: CartConstants.PRODUCT_REMOVED,
+            product: product
+        });
+    }
+
 };

@@ -27,6 +27,11 @@ class CartStore extends Store {
                 products.push(action.product);
                 this.__emitChange();
                 break;
+
+            case CartConstants.PRODUCT_REMOVED:
+                products = _.reject(products, 'objectID', product.objectID);
+                this.__emitChange();
+                break;
         }
     }
 }
