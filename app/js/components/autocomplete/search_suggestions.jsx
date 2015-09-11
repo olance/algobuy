@@ -54,7 +54,7 @@ class SearchSuggestions extends React.Component {
             return (
                 <div className="search-suggestions">
                     <PriceRangeList search={this.props.search}/>
-                    <CategoriesSearch search={this.props.search}/>
+                    <CategorySearches search={this.props.search}/>
                     <PopularProducts search={this.props.search}/>
                 </div>
             );
@@ -121,10 +121,10 @@ class PriceRangeTag extends React.Component {
     }
 }
 
-// The CategoriesSearch component suggests "regular" searches that the user
+// The CategorySearches component suggests "regular" searches that the user
 // could perform in the categories that hold the highest count of products for
 // his query.
-class CategoriesSearch extends React.Component {
+class CategorySearches extends React.Component {
     render() {
         var suggestions = this._categoriesSuggestions();
 
@@ -156,32 +156,8 @@ class CategoriesSearch extends React.Component {
         categories.unshift(this._allDeptsCategory());
 
         return _.map(categories, (category) => {
-            let pluralizedResults = pluralize('result', category.count);
-
-            // Debounce our _performSearch handler to avoid triggering multiple
-            // searches when clicking (which focuses too)
-            let debouncedHandler = _.debounce(
-                this._performSearch.bind(this, category.name),
-                20, true);
-
-            // Putting a div to wrap the inside of the <li> and separate the
-            // element that is able to receive focus from the element that will
-            // receiving click events. Otherwise, both events trigger in a row
-            // at random order and that causes UI/UX problems!
-            return (
-                <li key={category.name}
-                    data-nav-stop tabIndex="-1"
-                    onKeyDown={debouncedHandler.bind(this, true)}
-                    onFocus={debouncedHandler.bind(this, false)}>
-                    <div onClick={debouncedHandler.bind(this, true)}>
-                        <span className="results-count">
-                            {category.count} {pluralizedResults}
-                        </span>
-                        {` for "${this.props.search.query}" in `}
-                        <span className="category-name">{category.name}</span>
-                    </div>
-                </li>
-            );
+            return <CategorySearch key={category.name} category={category}
+                                   query={this.props.search.query}/>
         });
     }
 
@@ -191,17 +167,52 @@ class CategoriesSearch extends React.Component {
             count: this.props.search.results.nbHits
         };
     }
+}
 
-    _performSearch(category, preemptive, event) {
+
+// A component to represent a single search suggestion in the category searches
+class CategorySearch extends React.Component {
+    render() {
+        var category = this.props.category,
+            pluralizedResults = pluralize('result', category.count);
+
+        // Debounce our _performSearch handler to avoid triggering multiple
+        // searches when clicking (which focuses too)
+        var debouncedHandler = _.debounce(this._performSearch.bind(this), 20, true);
+
+        // Putting a div to wrap the inside of the <li> and separate the
+        // element that is able to receive focus from the element that will
+        // receiving click events. Otherwise, both events trigger in a row
+        // at random order and that causes UI/UX problems!
+        return (
+            <li data-nav-stop tabIndex="-1"
+                onKeyDown={debouncedHandler.bind(this, true)}
+                onFocus={debouncedHandler.bind(this, false)}>
+
+                <div onClick={debouncedHandler.bind(this, true)}>
+                        <span className="results-count">
+                            {category.count} {pluralizedResults}
+                        </span>
+                    {` for "${this.props.query}" in `}
+                    <span className="category-name">{category.name}</span>
+                </div>
+            </li>
+        );
+    }
+
+    // Private methods
+    _performSearch(preemptive, event) {
         if(event.keyCode === 13 || event.type === 'click' || event.type === 'focus')
         {
             event.stopPropagation();
             event.preventDefault();
 
-            DisplayActions.displaySearch(category, preemptive);
+            DisplayActions.displaySearch(this.props.category.name, preemptive);
         }
     }
 }
+
+
 
 // The PopularProducts component shows the three most popular products that best
 // match the current search query
@@ -241,6 +252,7 @@ class PopularProducts extends React.Component {
     }
 }
 
+// A component to represent a single product in the popular products list
 class Product extends React.Component {
     constructor(props) {
         super(props);
