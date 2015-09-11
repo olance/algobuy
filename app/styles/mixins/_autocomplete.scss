@@ -192,6 +192,7 @@
 
           > div {
             background-color: $selection-blue;
+            outline: none;
           }
 
           -webkit-transform: scale(1.01);
@@ -300,6 +301,10 @@
 
           background: $white;
           border: 1px solid $dark-blue;
+
+          &:focus {
+            outline: none;
+          }
         }
 
         .main-info:after {

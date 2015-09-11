@@ -189,7 +189,9 @@ class CategorySearch extends React.Component {
                 onKeyDown={debouncedHandler.bind(this, true)}
                 onFocus={debouncedHandler.bind(this, false)}>
 
-                <div onClick={debouncedHandler.bind(this, true)}>
+                <div onClick={debouncedHandler.bind(this, true)}
+                     tabIndex="-1"
+                     onFocus={this._ignoreFocus.bind(this)}>
                         <span className="results-count">
                             {category.count} {pluralizedResults}
                         </span>
@@ -209,6 +211,13 @@ class CategorySearch extends React.Component {
 
             DisplayActions.displaySearch(this.props.category.name, preemptive);
         }
+    }
+
+    // We need to prevent the focus event from bubbling from our inner <div> to
+    // its parent <li>
+    _ignoreFocus(event) {
+        event.stopPropagation();
+        event.preventDefault();
     }
 }
 
@@ -284,7 +293,9 @@ class Product extends React.Component {
         // at random order and that causes UI/UX problems!
         return (
             <li {...attributes} className={classes}>
-                <div onClick={debouncedHandler.bind(this, true)}>
+                <div onClick={debouncedHandler.bind(this, true)}
+                     tabIndex="-1"
+                     onFocus={this._ignoreFocus.bind(this)}>
                     <div className="main-info">
                         <div className="picture">
                             <img src={product.image} alt={product.name}/>
@@ -307,6 +318,11 @@ class Product extends React.Component {
                 </div>
             </li>
         );
+    }
+
+    _ignoreFocus(event) {
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     _setHighlightState(highlight) {
