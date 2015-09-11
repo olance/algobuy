@@ -2,7 +2,11 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 import React from 'react';
+
 import QueryActions from 'actions/query_actions.js';
+import TooltipActions from 'actions/tooltip_actions';
+import {Tooltips} from 'constants/tooltip_constants';
+
 
 class SearchInput extends React.Component {
     constructor(props) {
@@ -92,6 +96,8 @@ class SearchInput extends React.Component {
         {
             this.props.onFocus.call(null, event);
         }
+
+        TooltipActions.changeTooltip(Tooltips.default);
     }
 }
 
