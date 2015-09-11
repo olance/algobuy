@@ -28,6 +28,10 @@ class BaseProduct extends React.Component {
         CartActions.productAdded(this.props.product);
     }
 
+    removeFromCart() {
+        CartActions.productRemoved(this.props.product);
+    }
+
     // Private methods
     _cartStoreChanged() {
         var inCart = CartStore.isProductInCart(this.props.product);
