@@ -11,7 +11,7 @@ const Keys = { enter: 13, esc: 27, tab: 9, up: 38, right: 39, down: 40, left: 37
 const GenericMapping = {
     [Keys.enter]: 'enter',
     [Keys.esc]: 'escape',
-    [Keys.tab]: 'next'
+    [Keys.tab]: { default: 'next', shift: 'previous' }
 };
 
 // Build a direction-specific mapping between keys and resulting actions
@@ -149,7 +149,7 @@ class KeyboardNavGroup extends React.Component {
 
         // If no stop could be found and the group is configured to loop, then
         // go back to the first non-ignored stop in the group.
-        if((!$nextStop || !$nextStop.length) && this.props.loop)
+        if((!$nextStop || !$nextStop.length) && this._shouldLoop(event))
         {
             $nextStop = $groupStops.not($ignoreStops).first();
         }
@@ -232,12 +232,38 @@ class KeyboardNavGroup extends React.Component {
         return _.contains(_.keys(this._directionMapping()), String(event.keyCode));
     }
 
+    _shouldLoop(event) {
+        var outer = this._isOuterGroup(),
+            tabKey = event.keyCode === Keys.tab,
+            loop = this.props.loop;
+
+        return tabKey ? loop && outer : loop;
+    }
+
+    _isOuterGroup() {
+        return this._$DOMElement().parents('.keyboard-nav-group').length === 0;
+    }
+
     _directionMapping() {
         return DirMapping[this.props.dir];
     }
 
     _actionForEvent(event) {
-        return this._directionMapping()[event.keyCode];
+        var action = this._directionMapping()[event.keyCode];
+
+        if(_.isPlainObject(action))
+        {
+            if(event.shiftKey)
+            {
+                action = action.shift;
+            }
+            else
+            {
+                action = action.default;
+            }
+        }
+
+        return action;
     }
 
     _$DOMElement() {
