@@ -400,7 +400,7 @@ class AddToCartButton extends React.Component {
 
     render() {
         var inCart = this.props.inCart,
-            active = this.props.active;
+            active = this.state.active;
 
         var attributes = {
             className: cx({
