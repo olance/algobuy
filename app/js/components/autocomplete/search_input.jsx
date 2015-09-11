@@ -13,14 +13,16 @@ class SearchInput extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         // If the search panel has been closed, make sure the search input gets
         // the focus back
-        if(this.props.search.closed && !this.props.search.blur)
+        if(this.props.search.closed)
         {
-            this._focus(true);
-        }
-
-        if(this.props.search.blur)
-        {
-            this._blur();
+            if(this.props.search.blur)
+            {
+                this._blur();
+            }
+            else
+            {
+                this._focus(true);
+            }
         }
     }
 
