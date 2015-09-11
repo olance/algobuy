@@ -83,6 +83,7 @@
 
     margin-left: -#{$width / 2 - 2}px;
     padding: #{$panel-padding}px;
+    padding-top: 5px;
 
     background-color: rgb(255, 255, 255);
 
@@ -107,6 +108,21 @@
       img {
         vertical-align: bottom;
         margin-left: 20px;
+      }
+    }
+
+    .tooltip {
+      font-size: 0.7em;
+      color: $light-grey;
+      margin-bottom: 10px;
+
+      img {
+        position: relative;
+        top: -2px;
+
+        margin-right: 4px;
+
+        vertical-align: middle;
       }
     }
 

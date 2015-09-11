@@ -11,6 +11,7 @@ import Search from 'algolia/search.js';
 import CartActions from 'actions/cart_actions';
 import DisplayActions from 'actions/display_actions';
 
+import Tooltip from './tooltip.jsx';
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
 // The SearchSuggestions component displays the panel that shows below the
@@ -53,6 +54,7 @@ class SearchSuggestions extends React.Component {
         {
             return (
                 <div className="search-suggestions">
+                    <Tooltip/>
                     <PriceRangeList search={this.props.search}/>
                     <CategorySearches search={this.props.search}/>
                     <PopularProducts search={this.props.search}/>
