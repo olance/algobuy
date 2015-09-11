@@ -28,6 +28,7 @@ class SearchSuggestions extends React.Component {
         var results = this.props.search.results,
             emptyQuery = results == SearchConstants.EMPTY_SEARCH_QUERY;
 
+        // Depending on the search status, we render an error message...
         if(results == SearchConstants.SEARCH_ERROR)
         {
             return (
@@ -39,10 +40,12 @@ class SearchSuggestions extends React.Component {
                 </div>
             );
         }
+        // ... nothing ...
         else if(emptyQuery || this.props.search.closed)
         {
             return null;
         }
+        // ... a useful message ...
         else if(results.nbHits === 0)
         {
             return (
@@ -54,6 +57,7 @@ class SearchSuggestions extends React.Component {
                 </div>
             );
         }
+        // ... or actual results.
         else
         {
             return (
@@ -72,6 +76,9 @@ export default SearchSuggestions;
 
 // PRIVATE COMPONENTS
 
+// Handle the list of price ranges shown to the user for refinements purposes
+// This list can be keyboard-navigated horizontally thanks to the
+// KeyboardNavGroup component
 class PriceRangeList extends React.Component {
     render() {
         var priceRanges = this._priceRangesList();
@@ -110,14 +117,11 @@ class PriceRangeTag extends React.Component {
             onClick: debouncedHandler,
             onFocus: debouncedHandler,
             'data-nav-stop': true,
-            tabIndex: -1
-        };
+            tabIndex: -1,
 
-        // If the tag is the active one, make it a nav priority target
-        if(this.props.priceRange.isRefined)
-        {
-            attributes['data-nav-priority'] = true;
-        }
+            // If the tag is the active one, make it a nav priority target
+            'data-nav-priority': this.props.priceRange.isRefined
+        };
 
         return (<span {...attributes}>{this.props.priceRange.name}</span>);
     }
@@ -281,9 +285,11 @@ class PopularProducts extends React.Component {
 class Product extends BaseProduct {
     constructor(props) {
         super(props);
-        _.extend(this.state, {
-            highlight: false
-        });
+
+        // The highlight state is used to keep the product's div visually
+        // focused when the actual browser focus has moved to the inner
+        // add to/remove from cart button.
+        this.state.highlight = false;
     }
 
     render() {
@@ -335,6 +341,7 @@ class Product extends BaseProduct {
         );
     }
 
+    // Block the focus event from the inner div
     _ignoreFocus(event) {
         event.stopPropagation();
         event.preventDefault();
@@ -364,6 +371,7 @@ class Product extends BaseProduct {
         }
     }
 
+    // Display the product in the results area
     _display(preemptive, event) {
         if(event.keyCode == 13 || event.type === 'click' || event.type === 'focus')
         {
@@ -391,41 +399,34 @@ class AddToCartButton extends React.Component {
     }
 
     render() {
-        if(this.props.inCart)
-        {
-            let attributes = {
-                className: cx({
-                    'in-cart': !this.state.active,
-                    'remove-from-cart': this.state.active
-                }),
+        var inCart = this.props.inCart,
+            active = this.props.active;
 
-                onMouseLeave: this._setActive.bind(this, false),
-                onMouseEnter: this._setActive.bind(this, true),
+        var attributes = {
+            className: cx({
+                'add-to-cart': !inCart,
+                'in-cart': inCart && !active,
+                'remove-from-cart': inCart && active
+            }),
 
-                onFocus: this._onFocus.bind(this),
-                onBlur: this._onBlur.bind(this),
+            onMouseLeave: this._setActive.bind(this, false),
+            onMouseEnter: this._setActive.bind(this, true),
 
-                onKeyDown: this.props.onRemove,
-                onClick: this.props.onRemove
-            };
+            onFocus: this._onFocus.bind(this),
+            onBlur: this._onBlur.bind(this),
 
-            return (
-                <span {...attributes} tabIndex="-1" data-nav-stop>
-                    {this.state.active ? 'REMOVE' : 'IN CART'}
-                </span>
-            );
-        }
-        else
-        {
-            return (
-                <span className="add-to-cart"
-                     onFocus={this._onFocus.bind(this)}
-                     onBlur={this._onBlur.bind(this)}
-                     onKeyDown={this.props.onAdd}
-                     onClick={this.props.onAdd}
-                     data-nav-stop tabIndex="-1">ADD TO CART</span>
-            );
-        }
+            onKeyDown: inCart ? this.props.onRemove : this.props.onAdd,
+            onClick: inCart ? this.props.onRemove : this.props.onAdd,
+
+            'data-nav-stop': true,
+            tabIndex: -1
+        };
+
+        var inCartText = active ? 'REMOVE' : 'IN CART',
+            text = inCart ? inCartText : 'ADD TO CART';
+
+
+        return <span {...attributes}>{text}</span>;
     }
 
     // Private methods
@@ -434,9 +435,11 @@ class AddToCartButton extends React.Component {
     }
 
     _onFocus(event) {
+        // Switch to active state and notify our parent that we're focused
         this._setActive(true);
         this.props.onFocus(event);
 
+        // Change the tooltip according to the "cart state" of the product
         if(this.props.inCart)
         {
             TooltipActions.changeTooltip(Tooltips.removeFromCart);
@@ -448,6 +451,8 @@ class AddToCartButton extends React.Component {
     }
 
     _onBlur(event) {
+        // Switch to non-active state and notify our parent that we're not
+        // focused anymore.
         this._setActive(false);
         this.props.onBlur(event);
     }

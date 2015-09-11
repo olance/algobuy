@@ -251,6 +251,8 @@ class KeyboardNavGroup extends React.Component {
     _actionForEvent(event) {
         var action = this._directionMapping()[event.keyCode];
 
+        // Handle the special case of the tab key (which could be expanded to
+        // other keys)
         if(_.isPlainObject(action))
         {
             if(event.shiftKey)

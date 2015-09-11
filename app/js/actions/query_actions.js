@@ -3,6 +3,7 @@ import * as QueryConstants from 'constants/query_constants';
 
 export default class QueryActions {
 
+    // Action to notify the query changed
     static queryChanged(query) {
         Dispatcher.dispatch({
             type: QueryConstants.QUERY_CHANGED,
@@ -10,6 +11,7 @@ export default class QueryActions {
         });
     }
 
+    // Action to clear the current search query
     static queryCleared() {
         Dispatcher.dispatch({
             type: QueryConstants.QUERY_CLEARED

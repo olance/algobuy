@@ -17,17 +17,20 @@ class CartStore extends Store {
     }
 
     isProductInCart(product) {
+        // Find product by objectID
         return _.find(products, 'objectID', product.objectID) != null;
     }
 
     __onDispatch(action) {
         switch(action.type) {
             case CartConstants.PRODUCT_ADDED:
+                // Add the product to the cart
                 products.push(action.product);
                 this.__emitChange();
                 break;
 
             case CartConstants.PRODUCT_REMOVED:
+                // Remove all products that have the same objectID
                 products = _.reject(products, 'objectID', action.product.objectID);
                 this.__emitChange();
                 break;

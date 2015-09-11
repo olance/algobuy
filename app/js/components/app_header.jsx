@@ -2,6 +2,7 @@ import React from 'react';
 
 import CartController from 'components/cart.jsx';
 
+// The AppHeader component contains the page logo and holds the cart component
 class AppHeader extends React.Component {
     render() {
         return (

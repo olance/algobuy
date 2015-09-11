@@ -97,8 +97,34 @@ class SearchStore extends Store {
             return;
         }
 
-        // Search!
-        Search.setQuery(QueryStore.getQuery()).search();
+        // Set the new query
+        Search.setQuery(QueryStore.getQuery());
+
+        // Search once without any refinements to get the list of price ranges
+        // for this new search, and once it's done do the real search
+        Search.searchOnce({ facetsRefinements: {} }, (error, results) => {
+            if(error)
+            {
+                this._serverSearchFailed(error);
+                return;
+            }
+
+            // Update the price ranges that are available for refinement
+            // by the user
+            let rangeReset = this._updatePriceRanges(results);
+
+            // If the price range was reset, we need to clear the search's
+            // refinement parameter to keep in sync with the price ranges
+            // display
+            if(rangeReset)
+            {
+                Search.clearRefinements('price_range');
+            }
+
+            // Run the actual search
+            Search.search();
+        })
+
     }
 
     _handleQueryCleared() {
@@ -121,21 +147,22 @@ class SearchStore extends Store {
         };
         lastError = null;
 
-        this._updatePriceRanges(action.results);
-
         this.__emitChange();
     }
 
 
     _updatePriceRanges(results) {
+        // If there are no hits, simply clear the price ranges list; otherwise
+        // have the list of ranges update itself
         if(results.nbHits > 0)
         {
             let ranges = results.getFacetValues('price_range');
-            currentPriceRanges.updateRanges(ranges);
+            return currentPriceRanges.updateRanges(ranges);
         }
         else
         {
             currentPriceRanges.clear();
+            return true;
         }
     }
 
@@ -146,11 +173,16 @@ class SearchStore extends Store {
     }
 
     _handlePriceRangeChanged(action) {
+        // Clear any previous price_range refinement (we don't want to
+        // accumulate them)
         Search.clearRefinements('price_range');
+        currentPriceRanges.resetActivePriceRange();
 
         if(action.priceRange !== SearchConstants.ANY_PRICE_RANGE)
         {
+            // Add the newly selected price range refinement
             Search.addFacetRefinement('price_range', action.priceRange);
+            currentPriceRanges.setActivePriceRange(action.priceRange);
         }
 
         Search.search();
@@ -173,35 +205,46 @@ class PriceRangeList {
         this.priceRanges = [];
     }
 
-    // Remember the available price ranges when we receive results and no
-    // refinement has been made. Thus, when one is eventually made, we can
-    // still get the whole list of ranges relevant to the current search
-    // query.
-    // When a price range refinement has been made, just update the current
-    // list to update the active range.
+    resetActivePriceRange() {
+        // Deactivate any selected price range, and activate the first, 'any
+        // price' range.
+        _.find(this.priceRanges, 'isRefined').isRefined = false;
+        (this.priceRanges[0] || {}).isRefined = true;
+    }
+
+    setActivePriceRange(priceRange) {
+        // Deactivate any selected price range, and activate the given one
+        (_.find(this.priceRanges, 'isRefined') || {}).isRefined = false;
+        (_.find(this.priceRanges, 'name', priceRange) || {}).isRefined = true;
+    }
+
+    // We'll receive new price ranges for each new search. Replace the current
+    // ranges list and try to keep the currently selected range active (if it is
+    // still present in the new list).
+    // Return whether the price range needed to be reset
     updateRanges(newRanges) {
-        if(_.any(newRanges, 'isRefined'))
+        var reset = true,
+            currentActiveRange = _.find(this.priceRanges, 'isRefined');
+
+        // Replace the price ranges and order them
+        this.priceRanges = _.cloneDeep(newRanges);
+        this.priceRanges = this.priceRanges.sort(PriceRangeList.sortRanges);
+
+        if(currentActiveRange)
         {
-            let currentActiveRange = _.find(this.priceRanges, 'isRefined'),
-                activeRangeName = _.find(newRanges, 'isRefined').name,
-                activeRange = _.find(this.priceRanges, 'name', activeRangeName);
+            let newActiveRange = _.find(this.priceRanges, 'name', currentActiveRange.name);
 
-            if(currentActiveRange)
+            // If we found the currently active range within the new ranges, no need
+            // to reset the active range to "any price"
+            if(newActiveRange)
             {
-                currentActiveRange.isRefined = false;
-            }
-
-            if (activeRange)
-            {
-                activeRange.isRefined = true;
+                newActiveRange.isRefined = true;
+                reset = false;
             }
         }
-        else
-        {
-            this.priceRanges = _.cloneDeep(newRanges);
-            this.priceRanges = this.priceRanges.sort(PriceRangeList.sortRanges);
-            this.priceRanges.unshift(PriceRangeList.anyPriceRange(true));
-        }
+
+        this.priceRanges.unshift(PriceRangeList.anyPriceRange(reset));
+        return reset;
     }
 
     clear() {
