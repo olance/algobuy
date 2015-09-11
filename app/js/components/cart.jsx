@@ -5,6 +5,7 @@ import React from 'react';
 import {Container} from 'flux/utils';
 
 import OutsideClickHandler from 'components/outside_click_handler.jsx';
+import BaseProduct from 'components/base_product.jsx';
 
 import CartStore from 'stores/cart_store.js';
 
@@ -14,11 +15,14 @@ class CartController extends React.Component {
         return [CartStore];
     }
 
-    static calculateState() {
+    static calculateState(prevState) {
+        var wasOpened = prevState ? prevState.opened : false,
+            productsCount = CartStore.getProductsCount();
+
         return {
-            productsCount: CartStore.getProductsCount(),
+            productsCount: productsCount,
             products: CartStore.getProducts(),
-            opened: false
+            opened: wasOpened && productsCount > 0
         };
     }
 
@@ -93,10 +97,14 @@ class CartProducts extends React.Component {
     }
 }
 
-class CartProduct extends React.Component {
+class CartProduct extends BaseProduct {
     render() {
         return (
             <li className="product">
+                <span className="remove" onClick={this.removeFromCart.bind(this)}>
+                    <img src="images/remove-from-cart-icon.png"
+                         alt="Remove from cart"/>
+                </span>
                 <span className="price">${this.props.product.price}</span>
                 <span className="name">{this.props.product.name}</span>
             </li>

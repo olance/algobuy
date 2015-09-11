@@ -123,6 +123,17 @@ header {
             border-bottom-width: 0;
           }
 
+          .remove {
+            position: relative;
+            top: -1px;
+
+            display: inline-block;
+
+            margin-right: 10px;
+
+            cursor: pointer;
+          }
+
           .price {
             @include font-smoothing(on);
 
