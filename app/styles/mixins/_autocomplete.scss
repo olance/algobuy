@@ -379,6 +379,14 @@
           outline: none;
         }
 
+        .remove-from-cart {
+          @extend %cart-badge;
+
+          background: $red url('../images/remove-from-cart-icon.png') no-repeat top 5px left 5px;
+          color: $white;
+          outline: none;
+        }
+
         .name {
           font-size: .75em;
           text-align: center;
