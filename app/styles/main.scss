@@ -149,11 +149,15 @@ header {
 
 .display {
   .product {
+    position: relative;
     display: inline-block;
     width: 30%;
 
     margin: 1.6%;
     padding: 20px;
+    padding-bottom: 40px;
+
+    border: 3px solid $light-grey;
 
     background-color: $white;
     color: $dark-grey;
@@ -174,6 +178,10 @@ header {
       transform: scale(1.05);
 
       box-shadow: 3px 4px 15px 0 rgba(0, 0, 0, .6);
+    }
+
+    &.in-cart {
+      border-color: $green;
     }
 
 
@@ -205,6 +213,36 @@ header {
           font-style: normal;
         }
       }
+    }
+
+    %cart-badge {
+      @include font-smoothing(on);
+
+      position: absolute;
+
+      bottom: -1px;
+      left: -1px;
+      right: -1px;
+
+      padding: 10px;
+
+      color: $white;
+
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .add-to-cart {
+      @extend %cart-badge;
+      background-color: $light-grey;
+
+      cursor: pointer;
+    }
+
+    .in-cart {
+      @extend %cart-badge;
+
+      background-color: $green;
     }
 
     &.large {
