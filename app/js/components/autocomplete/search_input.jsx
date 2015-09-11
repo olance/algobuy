@@ -28,7 +28,7 @@ class SearchInput extends React.Component {
         return (
             <div className="search-input">
                 <input className="query" type="text"
-                       placeholder="Type something..." autoComplete="off"
+                       placeholder="What are you looking for?" autoComplete="off"
                        spellCheck="false" autoCorrect="off"
 
                        ref="searchInput"
