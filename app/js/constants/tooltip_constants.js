@@ -2,9 +2,10 @@
 export const CHANGE_TOOLTIP = Symbol('TooltipChange');
 
 export const Tooltips = {
-    default: 'default',
-    priceRange: 'price_range',
-    search: 'search',
-    product: 'product',
-    cart: 'cart'
+    default: Symbol('TooltipDefault'),
+    priceRange: Symbol('TooltipPriceRange'),
+    search: Symbol('TooltipSearch'),
+    product: Symbol('TooltipProduct'),
+    addToCart: Symbol('TooltipAddtoCart'),
+    removeFromCart: Symbol('TooltipRemoveFromCart')
 };
