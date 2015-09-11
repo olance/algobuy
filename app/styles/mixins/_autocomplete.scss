@@ -349,16 +349,19 @@
           font-size: 1.5em;
         }
 
-        .add-to-cart {
+        %cart-badge {
           display: inline-block;
 
           padding: 2px 4px;
           padding-left: 16px;
-          border-radius: 2px;
-
-          background: transparent url('../images/cart.png') no-repeat top 3px left 2px;
 
           font-size: .75em;
+        }
+
+        .add-to-cart {
+          @extend %cart-badge;
+
+          background: transparent url('../images/cart.png') no-repeat top 3px left 2px;
 
           &:hover,
           &:focus {
@@ -366,6 +369,14 @@
             color: $white;
             outline: none;
           }
+        }
+
+        .in-cart {
+          @extend %cart-badge;
+
+          background: $green url('../images/in-cart-check.png') no-repeat top 3px left 2px;
+          color: $white;
+          outline: none;
         }
 
         .name {
