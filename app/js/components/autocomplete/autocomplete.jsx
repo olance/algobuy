@@ -24,6 +24,7 @@ class AutocompleteContainer extends React.Component {
         return [QueryStore, SearchStore, DisplayStore];
     }
 
+    // Gather some data from the different stores we're observing
     static calculateState(prevState) {
         var searchResults = SearchStore.getResults(),
             forceClose = DisplayStore.isDisplayPreempting();
@@ -58,6 +59,8 @@ class AutocompleteContainer extends React.Component {
     }
 
     _handleEscape(event) {
+        // Clear the query if the suggestions panel is closed, otherwise just
+        // close it
         if(this.state.closed)
         {
             QueryActions.queryCleared();
@@ -69,6 +72,8 @@ class AutocompleteContainer extends React.Component {
     }
 
     _outsideClick() {
+        // Close the panel when the user clicks outside of the autocomplete
+        // component
         if(!this.state.closed)
         {
             this.setState(_.extend({}, this.state, { closed: true }));
@@ -76,6 +81,8 @@ class AutocompleteContainer extends React.Component {
     }
 
     _inputFocused(event) {
+        // Re-open the panel automatically when the search input is focused
+        // again (if there's a non-empty current query)
         if(this.state.closed)
         {
             this.setState(_.extend({}, this.state, { closed: false }));

@@ -9,13 +9,19 @@ import BaseProduct from 'components/base_product.jsx';
 
 import CartStore from 'stores/cart_store.js';
 
-
+// The CartController component observes the Cart store and re-renders when a
+// product is added to, or removed from the cart.
+// It displays a cart icon with a badge indicating the number of products
+// currently added to the cart, and will show a list of these products when the
+// icon is clicked.
 class CartController extends React.Component {
     static getStores() {
         return [CartStore];
     }
 
     static calculateState(prevState) {
+        // Make sure the cart stays open when its last state was to be opened.
+        // This is to prevent the cart from closing when deleting a product.
         var wasOpened = prevState ? prevState.opened : false,
             productsCount = CartStore.getProductsCount();
 
@@ -38,16 +44,19 @@ class CartController extends React.Component {
     }
 
     _iconClick() {
+        // Do not open the cart if there are no products inside
         if(this.state.productsCount === 0)
         {
             return;
         }
 
+        // Toggle the cart content
         var opened = !this.state.opened;
         this.setState(_.extend({}, this.state, { opened: opened }));
     }
 
     _outsideClick() {
+        // Close the cart when the user clicks outside of it
         this.setState(_.extend({}, this.state, { opened: false }));
     }
 }
@@ -57,6 +66,7 @@ export default Container.create(CartController);
 
 // PRIVATE COMPONENTS
 
+// This component simply displays the cart's icon along with the counter badge
 class CartIcon extends React.Component {
     render() {
         var badgeClasses = cx({
@@ -76,6 +86,7 @@ class CartIcon extends React.Component {
     }
 }
 
+// This component handles the list of products present in the cart
 class CartProducts extends React.Component {
     render() {
         var classes = cx({
@@ -97,6 +108,8 @@ class CartProducts extends React.Component {
     }
 }
 
+// Simple component to display a single product. Note that we extend the
+// BaseProduct class, to be able to remove the product from the cart easily.
 class CartProduct extends BaseProduct {
     render() {
         return (

@@ -11,7 +11,9 @@ import DisplayStore, {DisplayTypes} from 'stores/display_store';
 import masonry from 'react-masonry-component';
 const Masonry = masonry(React);
 
-
+// This component displays results from the autocomplete menu; either a single
+// product from the popular products suggestions, or a list of products,
+// resulting from a suggested category-search
 class ResultsDisplayController extends React.Component {
     static getStores() {
         return [DisplayStore];
@@ -29,12 +31,15 @@ class ResultsDisplayController extends React.Component {
 
         switch(this.state.displayType)
         {
+            // Display a single product (as a large card)
             case DisplayTypes.product:
                 content = (
                     <Product product={this.state.products[0]} large/>
                 );
                 break;
 
+            // Display all products (only the first page actually) in a Masonry
+            // component that will organize them nicely.
             case DisplayTypes.search:
                 let products = this.state.products.map((product) => {
                     return <Product key={product.objectID} product={product}/>
@@ -60,10 +65,18 @@ export default Container.create(ResultsDisplayController)
 
 
 // PRIVATE COMPONENTS
+
+// This component is used to show a product with a button to add or remove the
+// product from the cart, depending on it being added to the cart or not. The
+// BaseProduct component is inherited to fulfill that purpose.
 class Product extends BaseProduct {
     constructor(props) {
         super(props);
-        this.state.willRemove = false;
+
+        // The buttonHover state is set to true when the add to/remove from cart
+        // button from the AddToCartButton component is hovered. Some special
+        // CSS styles are applied in this case.
+        this.state.buttonHover = false;
     }
 
     render() {
@@ -100,6 +113,8 @@ class Product extends BaseProduct {
 
     // Private methods
     _setButtonHover(hover) {
+        // Set the buttonHover state, depending on what the AddToCartButton
+        // reported
         this.setState(_.extend({}, this.state, { buttonHover: hover }));
     }
 }
@@ -109,6 +124,10 @@ class AddToCartButton extends React.Component {
         super(props);
 
         this.state = {
+            // The active state is used when the button is hovered. In the case
+            // when the product this button "controls" is in the cart, the
+            // button will show an "IN CART" notice when inactive, and a "REMOVE
+            // FROM CART" button when active.
             active: false
         };
     }

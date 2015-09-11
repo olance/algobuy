@@ -121,6 +121,8 @@ class SearchStore extends Store {
         };
         lastError = null;
 
+        // When results are received, we need to update the price ranges that
+        // are available for refinement by the user
         this._updatePriceRanges(action.results);
 
         this.__emitChange();
@@ -128,6 +130,8 @@ class SearchStore extends Store {
 
 
     _updatePriceRanges(results) {
+        // If there are no hits, simply clear the price ranges list; otherwise
+        // have the list of ranges update itself
         if(results.nbHits > 0)
         {
             let ranges = results.getFacetValues('price_range');
@@ -146,10 +150,13 @@ class SearchStore extends Store {
     }
 
     _handlePriceRangeChanged(action) {
+        // Clear any previous price_range refinement (we don't want to
+        // accumulate them)
         Search.clearRefinements('price_range');
 
         if(action.priceRange !== SearchConstants.ANY_PRICE_RANGE)
         {
+            // Add the newly selected price range refinement
             Search.addFacetRefinement('price_range', action.priceRange);
         }
 

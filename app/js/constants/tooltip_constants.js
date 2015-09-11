@@ -1,6 +1,7 @@
 // Action type sent to change the tooltip being displayed
 export const CHANGE_TOOLTIP = Symbol('TooltipChange');
 
+// The available tooltips identifiers
 export const Tooltips = {
     default: Symbol('TooltipDefault'),
     priceRange: Symbol('TooltipPriceRange'),

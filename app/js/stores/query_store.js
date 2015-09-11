@@ -26,6 +26,7 @@ class QueryStore extends Store {
                 break;
 
             case QueryConstants.QUERY_CLEARED:
+                // Prevent useless event when the query is already empty
                 if(currentQuery !== '')
                 {
                     currentQuery = '';
