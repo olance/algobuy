@@ -116,6 +116,7 @@ class PriceRangeTag extends React.Component {
             className: className,
             onClick: debouncedHandler,
             onFocus: debouncedHandler,
+            onKeyDown: this.keyDown.bind(this),
             'data-nav-stop': true,
             tabIndex: -1,
 
@@ -132,6 +133,13 @@ class PriceRangeTag extends React.Component {
         if(event.type === 'focus')
         {
             TooltipActions.changeTooltip(Tooltips.priceRange);
+        }
+    }
+
+    keyDown(event) {
+        if(event.keyCode == 13)
+        {
+            DisplayActions.displaySearch('All Departments', true);
         }
     }
 }
