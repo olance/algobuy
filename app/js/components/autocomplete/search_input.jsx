@@ -2,7 +2,11 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 import React from 'react';
+
 import QueryActions from 'actions/query_actions.js';
+import TooltipActions from 'actions/tooltip_actions';
+import {Tooltips} from 'constants/tooltip_constants';
+
 
 class SearchInput extends React.Component {
     constructor(props) {
@@ -15,7 +19,14 @@ class SearchInput extends React.Component {
         // the focus back
         if(this.props.search.closed)
         {
-            this._focus();
+            if(this.props.search.blur)
+            {
+                this._blur();
+            }
+            else
+            {
+                this._focus(true);
+            }
         }
     }
 
@@ -23,7 +34,7 @@ class SearchInput extends React.Component {
         return (
             <div className="search-input">
                 <input className="query" type="text"
-                       placeholder="Type something..." autoComplete="off"
+                       placeholder="What are you looking for?" autoComplete="off"
                        spellCheck="false" autoCorrect="off"
 
                        ref="searchInput"
@@ -54,7 +65,7 @@ class SearchInput extends React.Component {
         }
     }
 
-    inputIconClicked() {
+    inputIconClicked(event) {
         // `pointer-events: none` rule on the input-icon should prevent any
         // click event occurring when there's no query... so that's just in case
         // the CSS prop 'pointer-events' is not recognized.
@@ -66,19 +77,27 @@ class SearchInput extends React.Component {
 
         // Clear the current query and focus back the text input
         QueryActions.queryCleared();
-        this._focus();
+        this._focus(true);
     }
 
     // Private methods
-    _focus() {
+    _focus(silently) {
+        this.__silentFocus = silently;
         React.findDOMNode(this.refs.searchInput).focus();
+        this.__silentFocus = false;
+    }
+
+    _blur() {
+        React.findDOMNode(this.refs.searchInput).blur();
     }
 
     _onFocus(event) {
-        if(this.props.onFocus)
+        if(this.props.onFocus && !this.__silentFocus)
         {
             this.props.onFocus.call(null, event);
         }
+
+        TooltipActions.changeTooltip(Tooltips.default);
     }
 }
 

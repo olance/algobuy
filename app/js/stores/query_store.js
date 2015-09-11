@@ -26,7 +26,7 @@ class QueryStore extends Store {
                 break;
 
             case QueryConstants.QUERY_CLEARED:
-                if(currentQuery != '')
+                if(currentQuery !== '')
                 {
                     currentQuery = '';
                     this.__emitChange();
