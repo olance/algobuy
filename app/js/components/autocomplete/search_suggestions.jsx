@@ -15,6 +15,7 @@ import TooltipActions from 'actions/tooltip_actions';
 import {Tooltips} from 'constants/tooltip_constants';
 
 import Tooltip from './tooltip.jsx';
+import BaseProduct from 'components/base_product.jsx';
 import KeyboardNavGroup from './keyboard_nav_group.jsx';
 
 // The SearchSuggestions component displays the panel that shows below the
@@ -277,12 +278,12 @@ class PopularProducts extends React.Component {
 }
 
 // A component to represent a single product in the popular products list
-class Product extends React.Component {
+class Product extends BaseProduct {
     constructor(props) {
         super(props);
-        this.state = {
+        _.extend(this.state, {
             highlight: false
-        };
+        });
     }
 
     render() {
@@ -302,6 +303,7 @@ class Product extends React.Component {
         var product = this.props.product,
             classes = cx({ highlight: this.state.highlight });
 
+
         // Putting a div to wrap the inside of the <li> and separate the
         // element that is able to receive focus from the element that will
         // receiving click events. Otherwise, both events trigger in a row
@@ -318,13 +320,10 @@ class Product extends React.Component {
 
                         <div className="price">${product.price}</div>
 
-                        <div className="add-to-cart"
-                             onFocus={this._setHighlightState.bind(this, true)}
-                             onBlur={this._setHighlightState.bind(this, false)}
-
-                             onKeyDown={this._addToCart.bind(this)}
-                             onClick={this._addToCart.bind(this)}
-                             data-nav-stop tabIndex="-1">ADD TO CART</div>
+                        <AddToCartButton inCart={this.state.inCart}
+                                         onFocus={this._setHighlightState.bind(this, true)}
+                                         onBlur={this._setHighlightState.bind(this, false)}
+                                         onAction={this._addToCart.bind(this)}/>
                     </div>
 
                     <div className="name"
@@ -352,7 +351,7 @@ class Product extends React.Component {
             event.stopPropagation();
             event.preventDefault();
 
-            CartActions.productAdded(this.props.product);
+            this.addToCart();
         }
     }
 
@@ -368,6 +367,27 @@ class Product extends React.Component {
         if(event.type === 'focus')
         {
             TooltipActions.changeTooltip(Tooltips.product);
+        }
+    }
+}
+
+// A component for the "Add to cart" button
+class AddToCartButton extends React.Component {
+    render() {
+        if(this.props.inCart)
+        {
+            return (<span className="in-cart">IN CART</span>);
+        }
+        else
+        {
+            return (
+                <div className="add-to-cart"
+                     onFocus={this.props.onFocus}
+                     onBlur={this.props.onBlur}
+                     onKeyDown={this.props.onAction}
+                     onClick={this.props.onAction}
+                     data-nav-stop tabIndex="-1">ADD TO CART</div>
+            );
         }
     }
 }

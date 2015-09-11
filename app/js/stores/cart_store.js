@@ -17,6 +17,10 @@ class CartStore extends Store {
         return _.cloneDeep(products);
     }
 
+    isProductInCart(product) {
+        return _.find(products, 'objectID', product.objectID) != null;
+    }
+
     __onDispatch(action) {
         switch(action.type) {
             case CartConstants.PRODUCT_ADDED:

@@ -3,6 +3,7 @@ import pluralize from 'pluralize';
 
 import React from 'react';
 import {Container} from 'flux/utils';
+import BaseProduct from 'components/base_product.jsx';
 
 import DisplayStore, {DisplayTypes} from 'stores/display_store';
 
@@ -58,11 +59,12 @@ export default Container.create(ResultsDisplayController)
 
 
 // PRIVATE COMPONENTS
-class Product extends React.Component {
+class Product extends BaseProduct {
     render() {
         var classes = cx({
             product: true,
-            large: this.props.large
+            large: this.props.large,
+            'in-cart': this.state.inCart
         });
 
         var product = this.props.product;
@@ -79,7 +81,28 @@ class Product extends React.Component {
                     <p className="description"
                        dangerouslySetInnerHTML={{__html: product._highlightResult.description.value}}></p>
                 </div>
+
+                <AddToCartButton inCart={this.state.inCart} onClick={this.addToCart.bind(this)}/>
             </div>
         );
+    }
+}
+
+class AddToCartButton extends React.Component {
+    render() {
+        if(this.props.inCart)
+        {
+            return (
+                <div className="in-cart">IN CART</div>
+            );
+        }
+        else
+        {
+            return (
+                <div className="add-to-cart" onClick={this.props.onClick}>
+                    ADD TO CART
+                </div>
+            );
+        }
     }
 }
