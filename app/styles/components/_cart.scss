@@ -1,0 +1,130 @@
+// Styles for the cart component - it's always there in the top-right corner of
+// the viewport.
+@mixin cart {
+  position: fixed;
+  top: 50px;
+  right: 50px;
+
+  // To make sure it's always on top of the other elements of the page
+  z-index: 10;
+
+  // The icon is a simple image but also shows a badge with the number of
+  // products in the cart
+  .cart-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 51px;
+    height: 51px;
+
+    background: transparent url('../images/large-cart-idle.png') no-repeat center center;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    &:hover {
+      background-image: url('../images/large-cart-hover.png');
+    }
+
+    // This is the badge. Looks complicated. Basically it's a div that's
+    // perfectly circular (thanks to border-radius) with center text overlaid on
+    // it.
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -10px;
+
+      width: 18px;
+
+      &:after {
+        content: '';
+        display: block;
+
+        width: 100%;
+        height: 0;
+
+        background-color: $magenta;
+
+        padding-bottom: 100%;
+        border-radius: 50%;
+      }
+
+      div {
+        @include font-smoothing(on);
+
+        float: left;
+        width: 100%;
+
+        padding-top: 50%;
+        margin-top: -.5em;
+
+        color: $white;
+
+        text-align: center;
+
+        font-size: .65em;
+        font-weight: 600;
+
+        line-height: 1em;
+      }
+    }
+  }
+
+  // This is the product list. Nothing fancy, just a few colors and margins...
+  .products {
+    position: absolute;
+    top: -10px;
+    right: -15px;
+
+    width: 500px;
+
+    padding: 10px;
+    padding-right: 75px;
+
+    background: $dark-blue;
+    border: 1px solid $light-blue;
+
+    ul {
+      padding: 0;
+      margin: 0;
+
+      list-style-type: none;
+
+      li {
+        @include font-smoothing(on);
+
+        padding: 10px 0;
+
+        color: $white;
+        font-size: .8em;
+
+        border-bottom: 1px solid $light-blue;
+
+        &:last-child {
+          border-bottom-width: 0;
+        }
+
+        .remove {
+          position: relative;
+          top: -1px;
+
+          display: inline-block;
+
+          margin-right: 10px;
+
+          cursor: pointer;
+        }
+
+        .price {
+          @include font-smoothing(on);
+
+          display: inline-block;
+          margin-right: 10px;
+          font-weight: 800;
+        }
+      }
+    }
+  }
+}

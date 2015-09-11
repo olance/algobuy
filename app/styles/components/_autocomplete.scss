@@ -4,7 +4,7 @@
 //
 //@param
 //
-@import 'font_smoothing';
+@import 'mixins/font_smoothing';
 
 @mixin autocomplete($width: 250, $height: 25) {
   display: inline-block;
@@ -16,7 +16,9 @@
 
   text-align: left;
 
+  // SearchInput component
   .search-input {
+    // The query <input> field
     .query {
       @include font-smoothing(on);
 
@@ -42,6 +44,8 @@
       }
     }
 
+    // Search/Clear icon in the 'clear' state by default. The magnifying glass
+    // icon is set when the widget has the 'empty' class.
     .query-input-icon {
       position: absolute;
       right: 7px;
@@ -53,16 +57,20 @@
       background: transparent url('../images/clear-icon.png') no-repeat center center;
       cursor: pointer;
 
+      // Opacity of the icon is reduced by default
       opacity: .6;
     }
   }
 
+  // Bring the opacity of the query input icon to 1 as a reaction to the user
+  // hovering the autocomplete component
   &:hover {
     .query-input-icon {
       opacity: 1;
     }
   }
 
+  // When the search query is empty, change the "clear" icon to a "search" icon
   &.empty {
     .query-input-icon {
       background: transparent url('../images/search-icon.png') no-repeat center center;
@@ -71,6 +79,8 @@
     }
   }
 
+  // SearchSuggestions component - a panel made as large as the query <input>,
+  // where all the search suggestions happens.
   .search-suggestions {
     $panel-width: $width - 4;
     $panel-padding: 10;
@@ -94,6 +104,8 @@
 
     z-index: 5;
 
+    // When there's no result or an error happened, we center a large text
+    // message in the panel
     &.no-results,
     &.search-error {
       @include font-smoothing(on);
@@ -111,6 +123,7 @@
       }
     }
 
+    // This is the tooltip message displayed at the top of the suggestions panel
     .tooltip {
       font-size: .7em;
       color: $light-grey;
@@ -126,6 +139,13 @@
       }
     }
 
+    // Price range component - it displays a range of prices (eg. '1 - 50') that
+    // the user can select to refine the suggestions made for his query.
+    // Displayed as small "tags" in a single row, they have three different
+    // states: idle/unselected, active (the user has refined his search with
+    // this tag) and highlighted/hovered/focused.
+    // The latter is used to differentiate from an active tag when the user is
+    // navigating the menu with the keyboard.
     .price-range {
       @include font-smoothing(on);
 
@@ -147,12 +167,15 @@
 
       transition: all .2s ease-out;
 
+      // Active state: plain dark background with light color
       &.active {
         border-color: transparent;
         color: $white;
         background-color: $dark-blue;
       }
 
+      // Highlighted: make the tag "pop up" a bit and change its background to a
+      // lighter tone.
       &.highlighted,
       &:hover,
       &:focus {
@@ -169,6 +192,10 @@
       }
     }
 
+    // This placeholder class is used as a base for both searches and popular
+    // products suggestions, defining the look of the heading and the list that
+    // comes after it.
+    // Rules extending this placeholder should style the list items.
     %suggestions {
       margin-top: 10px;
       font-size: .875em;
@@ -189,9 +216,13 @@
       }
     }
 
+    // Category-searches suggestions
     .categories {
       @extend %suggestions;
 
+      // One item per-line, with idle and hovered/focused state
+      // Note that an inner div is used as a direct child to the <li> element,
+      // to workaround browsers behavior regarding focus+click events.
       li {
         position: relative;
 
@@ -202,6 +233,8 @@
 
         transition: all .1s linear;
 
+        // Hovered/focuses state: change the background and pop the item up
+        // a bit.
         &:hover,
         &:focus {
           outline: none;
@@ -220,6 +253,8 @@
           }
         }
 
+        // The inner <div> covers the entire <li> area to make sure it receives
+        // the click events
         > div {
           position: absolute;
 
@@ -249,6 +284,7 @@
     }
 
 
+    // Popular products list
     .popular-products {
       @extend %suggestions;
 
@@ -262,6 +298,8 @@
         @return ($inner-width - 2 * $product-gutter) / $products-per-line;
       }
 
+      // Items fill the space horizontally before going to a new row
+      // The same inner div trick has been used here
       li {
         position: relative;
         display: inline-block;
@@ -306,6 +344,7 @@
           margin-right: 0;
         }
 
+        // Inner div for click events
         > div {
           position: absolute;
           top: 0;
@@ -323,6 +362,8 @@
           }
         }
 
+        // Below are the styles for the product's elements: picture, name, price
+        // and add to/remove from cart button
         .main-info:after {
           content: '';
           display: table;
@@ -349,6 +390,18 @@
           font-size: 1.5em;
         }
 
+        .name {
+          font-size: .75em;
+          text-align: center;
+
+          em {
+            font-weight: 800;
+            font-style: normal;
+          }
+        }
+
+        // Base styles for badge-like button used for the add to/remove from
+        // cart button.
         %cart-badge {
           display: inline-block;
 
@@ -385,16 +438,6 @@
           background: $red url('../images/remove-from-cart-icon.png') no-repeat top 5px left 5px;
           color: $white;
           outline: none;
-        }
-
-        .name {
-          font-size: .75em;
-          text-align: center;
-
-          em {
-            font-weight: 800;
-            font-style: normal;
-          }
         }
       }
     }
